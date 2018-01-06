@@ -1,21 +1,51 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using XnaModel = Microsoft.Xna.Framework.Graphics.Model;
+using Engine;
 
 namespace CFNGamejam2
 {
+    using GameServices = Services;
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
     public class Game1 : Game
     {
-        GraphicsDeviceManager graphics;
+        GraphicsDeviceManager Graphics;
         SpriteBatch spriteBatch;
-        
+        GameLogic TheGame;
+
+        Timer FPSTimer;
+        float FPSFrames = 0;
+
+        KeyboardState OldKeyState;
+        bool PauseGame = false;
+
         public Game1()
         {
-            graphics = new GraphicsDeviceManager(this);
+            Graphics = new GraphicsDeviceManager(this);
+            Graphics.IsFullScreen = false;
+            Graphics.SynchronizeWithVerticalRetrace = true; //When true, 60FSP refresh rate locked.
+            Graphics.GraphicsProfile = GraphicsProfile.HiDef;
+            Graphics.PreferredBackBufferWidth = 1200;
+            Graphics.PreferredBackBufferHeight = 900;
+            Graphics.PreferMultiSampling = true; //Error in MonoGame 3.6 for DirectX, fixed in version 3.7.
+            Graphics.PreparingDeviceSettings += SetMultiSampling;
+            Graphics.ApplyChanges();
+            Graphics.GraphicsDevice.RasterizerState = new RasterizerState(); //Must be after Apply Changes.
+            GameServices.TheGame = this;
+            IsFixedTimeStep = false;
             Content.RootDirectory = "Content";
+
+            TheGame = new GameLogic(this);
+            FPSTimer = new Timer(this, 1);
+        }
+
+        private void SetMultiSampling(object sender, PreparingDeviceSettingsEventArgs eventArgs)
+        {
+            PresentationParameters PresentParm = eventArgs.GraphicsDeviceInformation.PresentationParameters;
+            PresentParm.MultiSampleCount = 8;
         }
 
         /// <summary>
@@ -26,7 +56,13 @@ namespace CFNGamejam2
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            // Positive Y is Up. Positive X is Right.
+            GameServices.Initialize(Graphics, this, new Vector3(0, 200, 600), false, 1, 10000);
+            // Setup lighting.
+            GameServices.DefuseLight = new Vector3(0.6f, 0.5f, 0.7f);
+            GameServices.LightDirection = new Vector3(-0.75f, -0.75f, -0.5f);
+            GameServices.SpecularColor = new Vector3(0.1f, 0, 0.5f);
+            GameServices.AmbientLightColor = new Vector3(0.25f, 0.25f, 0.25f); // Add some overall ambient light.
 
             base.Initialize();
         }
@@ -52,6 +88,13 @@ namespace CFNGamejam2
             // TODO: Unload any non ContentManager content here
         }
 
+        protected override void BeginRun()
+        {
+            GameServices.BeginRun(); //This only happens once in a game.
+
+            base.BeginRun();
+        }
+
         /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
@@ -59,12 +102,31 @@ namespace CFNGamejam2
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
+                Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            KeyboardState KBS = Keyboard.GetState();
 
-            base.Update(gameTime);
+            if (TheGame.CurrentMode == GameState.InPlay)
+            {
+                if (!OldKeyState.IsKeyDown(Keys.P) && KBS.IsKeyDown(Keys.P))
+                    PauseGame = !PauseGame;
+            }
+
+            OldKeyState = Keyboard.GetState();
+
+            if (!PauseGame)
+                base.Update(gameTime);
+
+            FPSFrames++;
+
+            if (FPSTimer.Elapsed)
+            {
+                FPSTimer.Reset();
+                System.Diagnostics.Debug.WriteLine("FPS " + FPSFrames.ToString());
+                FPSFrames = 0;
+            }
         }
 
         /// <summary>
@@ -73,9 +135,7 @@ namespace CFNGamejam2
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            // TODO: Add your drawing code here
+            GraphicsDevice.Clear(new Color(0.05f, 0, 0.2f, 1));
 
             base.Draw(gameTime);
         }
