@@ -20,11 +20,11 @@
     <UpdateAssemblyVersion>True</UpdateAssemblyVersion>
     <UpdateAssemblyFileVersion>True</UpdateAssemblyFileVersion>
     <UpdateAssemblyInfoVersion>True</UpdateAssemblyInfoVersion>
-    <AssemblyVersionSettings>IncrementOnDemand.Increment.DayStamp.TimeStamp</AssemblyVersionSettings>
-    <AssemblyFileVersionSettings>YearStamp.DayOfYearStamp.MonthStamp.TimeStamp</AssemblyFileVersionSettings>
+    <AssemblyVersionSettings>IncrementOnDemand.Increment.DayStamp.IncrementOnDemandWithReset</AssemblyVersionSettings>
+    <AssemblyFileVersionSettings>MMddStamp.DayOfYearStamp.MonthStamp.TimeStamp</AssemblyFileVersionSettings>
     <AssemblyInfoVersionSettings>YearStamp.DateStamp.DeltaDayStamp.Increment</AssemblyInfoVersionSettings>
     <PrimaryVersionType>AssemblyVersionAttribute</PrimaryVersionType>
-    <AssemblyVersion>1.254.6.0540</AssemblyVersion>
+    <AssemblyVersion>1.425.8.0101</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -58,6 +58,7 @@
     <Compile Include="Engine\BoundingPart.cs" />
     <Compile Include="Engine\BoundingPartList.cs" />
     <Compile Include="Engine\Camera.cs" />
+    <Compile Include="Engine\Factory.cs" />
     <Compile Include="Engine\IBeginRun.cs" />
     <Compile Include="Engine\ICamera2D.cs" />
     <Compile Include="Engine\IDrawComponent.cs" />
@@ -75,11 +76,14 @@
     <Compile Include="Engine\SpritePositionedObject.cs" />
     <Compile Include="Engine\Timer.cs" />
     <Compile Include="Engine\Words.cs" />
+    <Compile Include="Entities\Bomb.cs" />
     <Compile Include="Entities\Duck.cs" />
     <Compile Include="Entities\EnemyControl.cs" />
     <Compile Include="Entities\Explode.cs" />
     <Compile Include="Entities\ExplodeParticle.cs" />
     <Compile Include="Entities\Ground.cs" />
+    <Compile Include="Entities\Missile.cs" />
+    <Compile Include="Entities\MissileBattery.cs" />
     <Compile Include="Entities\Player.cs" />
     <Compile Include="Entities\TankShot.cs" />
     <Compile Include="Game1.cs" />

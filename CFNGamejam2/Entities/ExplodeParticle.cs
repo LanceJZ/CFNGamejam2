@@ -16,9 +16,6 @@ namespace CFNGamejam2.Entities
         public ExplodeParticle(Game game) : base(game)
         {
             LifeTimer = new Timer(game);
-
-            LoadContent();
-            BeginRun();
         }
 
         public override void Initialize()
@@ -45,12 +42,10 @@ namespace CFNGamejam2.Entities
             base.Update(gameTime);
         }
 
-        public void Spawn(Vector3 position)
+        public override void Spawn(Vector3 position)
         {
             Velocity = RandomVelocity(100);
-            Position = position;
-            MatrixUpdate();
-            Active = true;
+            base.Spawn(position);
             Scale = Services.RandomMinMax(1, 2);
             LifeTimer.Reset(Services.RandomMinMax(0.1f, 1));
         }

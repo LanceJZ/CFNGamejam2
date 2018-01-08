@@ -35,7 +35,6 @@ namespace Engine
 		bool m_ExplosionActive = false;
 		bool m_Pause = false;
 		bool m_Moveable = true;
-		bool m_Active = true;
 		bool m_ActiveDependent;
 		bool m_DirectConnection;
 		bool m_Parent;
@@ -79,7 +78,7 @@ namespace Engine
 		/// <summary>
 		/// Enabled causes the class to update. If base of Sprite, enables sprite to be drawn.
 		/// </summary>
-		public bool Active { get => m_Active; set => m_Active = value; }
+		public bool Active { get => Enabled; set => Enabled = value; }
 		/// <summary>
 		/// Enabled the active bool will mirror that of the parent.
 		/// </summary>
@@ -116,6 +115,7 @@ namespace Engine
 		public override void Initialize()
 		{
 			base.Initialize();
+			BeginRun();
 		}
 
 		public virtual void BeginRun()
@@ -128,7 +128,7 @@ namespace Engine
 		/// <param name="gameTime">Provides a snapshot of timing values.</param>
 		public override void Update(GameTime gameTime)
 		{
-			if (Moveable && Active)
+			if (Moveable)
 			{
 				base.Update(gameTime);
 
@@ -186,7 +186,7 @@ namespace Engine
 		}
 		/// <summary>
 		/// Circle collusion detection. Target circle will be compared to this class's.
-		/// Will return true of they intersect.
+		/// Will return true of they intersect. Only for use with 2D Z plane.
 		/// </summary>
 		/// <param name="Target">Position of target.</param>
 		/// <param name="TargetRadius">Radius of target.</param>
@@ -204,7 +204,7 @@ namespace Engine
 		}
 		/// <summary>
 		/// Circle collusion detection. Target circle will be compared to this class's.
-		/// Will return true of they intersect.
+		/// Will return true of they intersect. Only for use with 2D Z plane.
 		/// </summary>
 		/// <param name="Target">Target Positioned Object.</param>
 		/// <returns></returns>
@@ -220,15 +220,43 @@ namespace Engine
 			return false;
 		}
 		/// <summary>
+		/// Returns Vector3 direction of travel from origin to target. Y is ignored.
+		/// </summary>
+		/// <param name="origin">Vector3 of origin</param>
+		/// <param name="target">Vector3 of target</param>
+		/// <param name="magnitude">float of speed of travel</param>
+		/// <returns>Vector3</returns>
+		public Vector3 VelocityFromVectorsY(Vector3 origin, Vector3 target, float magnitude)
+		{
+			return VelocityFromAngleY(AngleFromVectorsY(origin, target), magnitude);
+		}
+		/// <summary>
+		/// Returns Vector3 direction of travel to target. Y is ignored.
+		/// </summary>
+		/// <param name="target">Vector3 of target</param>
+		/// <param name="magnitude">float of speed of travel</param>
+		/// <returns>Vector3</returns>
+		public Vector3 VelocityFromVectorsY(Vector3 target, float magnitude)
+		{
+			return VelocityFromAngleY(AngleFromVectorsY(target), magnitude);
+		}
+		/// <summary>
+		/// Returns a float of the angle in radians derived from two Vector3 passed into it,
+		/// using only the X and Z.
+		/// </summary>
+		/// <param name="origin">Vector3 of origin</param>
+		/// <param name="target">Vector3 of target</param>
+		/// <returns>Float</returns>
+		/// <summary>
 		/// Returns Vector3 direction of travel from origin to target. Z is ignored.
 		/// </summary>
 		/// <param name="origin">Vector3 of origin</param>
 		/// <param name="target">Vector3 of target</param>
 		/// <param name="magnitude">float of speed of travel</param>
 		/// <returns>Vector3</returns>
-		public Vector3 VelocityFromVectors(Vector3 origin, Vector3 target, float magnitude)
+		public Vector3 VelocityFromVectorsZ(Vector3 origin, Vector3 target, float magnitude)
 		{
-			return VelocityFromAngle(AngleFromVectors(origin, target), magnitude);
+			return VelocityFromAngleZ(AngleFromVectorsZ(origin, target), magnitude);
 		}
 		/// <summary>
 		/// Returns Vector3 direction of travel to target. Z is ignored.
@@ -236,17 +264,44 @@ namespace Engine
 		/// <param name="target">Vector3 of target</param>
 		/// <param name="magnitude">float of speed of travel</param>
 		/// <returns>Vector3</returns>
-		public Vector3 VelocityFromVectors(Vector3 target, float magnitude)
+		public Vector3 VelocityFromVectorsZ(Vector3 target, float magnitude)
 		{
-			return VelocityFromAngle(AngleFromVectors(target), magnitude);
+			return VelocityFromAngleZ(AngleFromVectorsZ(target), magnitude);
 		}
 		/// <summary>
-		/// Returns a float of the angle in radians derived from two Vector3 passed into it, using only the X and Y.
+		/// Returns a float of the angle in radians derived from two Vector3 passed into it,
+		/// using only the X and Z.
 		/// </summary>
 		/// <param name="origin">Vector3 of origin</param>
 		/// <param name="target">Vector3 of target</param>
 		/// <returns>Float</returns>
-		public float AngleFromVectors(Vector3 origin, Vector3 target)
+		public float AngleFromVectorsY(Vector3 origin, Vector3 target)
+		{
+			return (float)(Math.Atan2(-target.Z - -origin.Z, target.X - origin.X));
+		}
+		/// <summary>
+		/// Returns a float of the angle in radians derived from two Vector3 passed into it,
+		/// using only the X and Z.
+		/// </summary>
+		/// <param name="origin">Vector3 of origin</param>
+		/// <param name="target">Vector3 of target</param>
+		/// <returns>Float</returns>
+		/// <summary>
+		/// Returns a float of the angle in radians to target, using only the X and Y.
+		/// </summary>
+		/// <param name="target">Vector3 of target</param>
+		/// <returns>Float</returns>
+		public float AngleFromVectorsY(Vector3 target)
+		{
+			return (float)(Math.Atan2(-target.Z - -Position.Z, target.X - Position.X));
+		}
+		/// <summary>
+		/// Returns a float of the angle in radians to target, using only the X and Y.
+		/// </summary>
+		/// <param name="origin"></param>
+		/// <param name="target"></param>
+		/// <returns></returns>
+		public float AngleFromVectorsZ(Vector3 origin, Vector3 target)
 		{
 			return (float)(Math.Atan2(target.Y - origin.Y, target.X - origin.X));
 		}
@@ -255,7 +310,7 @@ namespace Engine
 		/// </summary>
 		/// <param name="target">Vector3 of target</param>
 		/// <returns>Float</returns>
-		public float AngleFromVectors(Vector3 target)
+		public float AngleFromVectorsZ(Vector3 target)
 		{
 			return (float)(Math.Atan2(target.Y - Position.Y, target.X - Position.X));
 		}
@@ -269,13 +324,13 @@ namespace Engine
 		{
 			float ang = RandomRadian();
 			float amt = Services.RandomMinMax(speed * 0.15f, speed);
-			return VelocityFromAngle(ang, amt);
+			return VelocityFromAngleZ(ang, amt);
 		}
 
 		public Vector3 RandomVelocity(float speed, float radianDirection)
 		{
 			float amt = Services.RandomMinMax(speed * 0.15f, speed);
-			return VelocityFromAngle(radianDirection, amt);
+			return VelocityFromAngleZ(radianDirection, amt);
 		}
 		/// <summary>
 		/// Returns a velocity with Z as the ground plane. Y as up.
@@ -290,23 +345,47 @@ namespace Engine
 				(float)Math.Sin(angle.Y) * magnitude,
 				-(float)(Math.Sin(angle.X) * magnitude));
 		}
-
 		/// <summary>
-		/// Returns a Vector3 direction of travel from angle and magnitude. Only X and Y are calculated, Z = 0.
+		/// Returns a Vector3 direction of travel from angle and magnitude.
+		/// Only X and Z are calculated, Z = 0.
 		/// </summary>
-		/// <param name="angle"></param>
+		/// <param name="rotation"></param>
 		/// <param name="magnitude"></param>
 		/// <returns>Vector3</returns>
-		public Vector3 VelocityFromAngle(float rotation, float magnitude)
+		public Vector3 VelocityFromAngleY(float rotation, float magnitude)
 		{
-			return new Vector3((float)Math.Cos(rotation) * magnitude, (float)Math.Sin(rotation) * magnitude, 0);
+			return new Vector3((float)Math.Cos(rotation) * magnitude,
+				0, -((float)Math.Sin(rotation) * magnitude));
+		}
+		/// <summary>
+		/// Returns a Vector3 direction of travel from angle and magnitude.
+		/// Only X and Y are calculated, Z = 0.
+		/// </summary>
+		/// <param name="ro"></param>
+		/// <param name="magnitude"></param>
+		/// <returns>Vector3</returns>
+		public Vector3 VelocityFromAngleZ(float rotation, float magnitude)
+		{
+			return new Vector3((float)Math.Cos(rotation) * magnitude,
+				(float)Math.Sin(rotation) * magnitude, 0);
+		}
+		/// <summary>
+		/// Returns a Vector3 direction of travel from random angle and set magnitude. Y is ignored.
+		/// </summary>
+		/// <param name="magnitude"></param>
+		/// <returns>Vector3</returns>
+		public Vector3 VelocityFromAngleY(float magnitude)
+		{
+			float angle = RandomRadian();
+			return new Vector3((float)Math.Cos(angle) * magnitude, 0,
+				-((float)Math.Sin(angle) * magnitude));
 		}
 		/// <summary>
 		/// Returns a Vector3 direction of travel from random angle and set magnitude. Z is ignored.
 		/// </summary>
 		/// <param name="magnitude"></param>
 		/// <returns>Vector3</returns>
-		public Vector3 VelocityFromAngle(float magnitude)
+		public Vector3 VelocityFromAngleZ(float magnitude)
 		{
 			float angle = RandomRadian();
 			return new Vector3((float)Math.Cos(angle) * magnitude, (float)Math.Sin(angle) * magnitude, 0);
@@ -317,11 +396,82 @@ namespace Engine
 			return new Vector2(Services.WindowWidth * 0.5f,
 				Services.RandomMinMax(-Services.WindowHeight * 0.45f, Services.WindowHeight * 0.45f));
 		}
-
-		public float AimAtTarget(Vector3 target, float facingAngle, float magnitude)
+		/// <summary>
+		/// Aims at target using the Y ground Plane.
+		/// Only X and Z are used in the calculation.
+		/// </summary>
+		/// <param name="target">Vector3</param>
+		/// <param name="facingAngle">float</param>
+		/// <param name="magnitude">float</param>
+		/// <returns></returns>
+		public float AimAtTargetY(Vector3 target, float facingAngle, float magnitude)
 		{
 			float turnVelocity = 0;
-			float targetAngle = AngleFromVectors(Position, target);
+			float targetAngle = AngleFromVectorsY(target);
+			float targetLessFacing = targetAngle - facingAngle;
+			float facingLessTarget = facingAngle - targetAngle;
+
+			if (Math.Abs(targetLessFacing) > MathHelper.Pi)
+			{
+				if (facingAngle > targetAngle)
+				{
+					facingLessTarget = ((MathHelper.TwoPi - facingAngle) + targetAngle) * -1;
+				}
+				else
+				{
+					facingLessTarget = (MathHelper.TwoPi - targetAngle) + facingAngle;
+				}
+			}
+
+			if (facingLessTarget > 0)
+			{
+				turnVelocity = -magnitude;
+			}
+			else
+			{
+				turnVelocity = magnitude;
+			}
+
+			return turnVelocity;
+		}
+
+		public bool AimedAtTargetY(Vector3 target, float facingAngle, float accuricy)
+		{
+			float targetAngle = AngleFromVectorsY(target);
+			float targetLessFacing = targetAngle - facingAngle;
+			float facingLessTarget = facingAngle - targetAngle;
+
+			if (Math.Abs(targetLessFacing) > MathHelper.Pi)
+			{
+				if (facingAngle > targetAngle)
+				{
+					facingLessTarget = ((MathHelper.TwoPi - facingAngle) + targetAngle) * -1;
+				}
+				else
+				{
+					facingLessTarget = (MathHelper.TwoPi - targetAngle) + facingAngle;
+				}
+			}
+
+			if (facingLessTarget < accuricy && facingLessTarget > -accuricy)
+			{
+				return true;
+			}
+
+			return false;
+		}
+		/// <summary>
+		/// Aims at target using the Z ground Plane.
+		/// Only X and Y are used in the calculation.
+		/// </summary>
+		/// <param name="target">Vector3</param>
+		/// <param name="facingAngle">float</param>
+		/// <param name="magnitude">float</param>
+		/// <returns></returns>
+		public float AimAtTargetZ(Vector3 target, float facingAngle, float magnitude)
+		{
+			float turnVelocity = 0;
+			float targetAngle = AngleFromVectorsZ(Position, target);
 			float targetLessFacing = targetAngle - facingAngle;
 			float facingLessTarget = facingAngle - targetAngle;
 

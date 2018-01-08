@@ -21,18 +21,16 @@ namespace Engine
         public Vector3 ModelScaleVelocity = Vector3.Zero;
         public Vector3 ModelScaleAcceleration = Vector3.Zero;
         bool m_AnimatedScale = true;
-        bool m_Visable = true;
 
         public XnaModel XNAModel { get; private set; }
         public Matrix TheWoldMatrix { get => BaseWorld; }
         public BoundingSphere Sphere { get => XNAModel.Meshes[0].BoundingSphere; }
         public float SphereRadius { get => XNAModel.Meshes[0].BoundingSphere.Radius; }
         public bool AnimatedScale { get => m_AnimatedScale; set => m_AnimatedScale = value; }
-        public bool Visable { get => m_Visable; set => m_Visable = value; }
+        public bool Visable { get => Enabled; set => Enabled = value; }
 
         public AModel (Game game) : base(game)
         {
-
         }
 
         public AModel(Game game, XnaModel model) : base(game)
@@ -63,6 +61,7 @@ namespace Engine
 
         public override void BeginRun()
         {
+            LoadContent();
             base.BeginRun();
         }
 
@@ -70,48 +69,47 @@ namespace Engine
         {
             base.Update(gameTime);
 
-            if (Active)
+            /* A rule of thumb is ISROT - Identity, Scale, Rotate, Orbit, Translate.
+                This is the order to multiple your matrices in.
+                So for the moon and earth example, to place the moon:
+                Identity - this is just Matrix.Identity (an all 1's matrix).
+                Scale - Scale the moon to it's proper size.
+                Rotate - rotate the moon around it's own center
+                Orbit - this is a two step Translate then Rotate process,
+                        first Translate (move) the moon to it's position relative to the
+                        earth (i.e. if the earth was at 0, 0, 0).  The rotate the moon around
+                        this point to position it in orbit.
+                Translate - move the moon to the final location, which will be the same
+                        as the location of earth in this case since it's already setup to be in orbit.*/
+
+            //Calculate the base transformation by combining
+            //translation, rotation, and scaling
+            //BaseWorld = Matrix.CreateScale(ModelScale)
+            //    * Matrix.CreateFromYawPitchRoll(Rotation.Y, Rotation.X, Rotation.Z)
+            //    * Matrix.CreateTranslation(Position);
+
+            //if (Child)
+            //{
+            //    BaseWorld *= Matrix.CreateFromYawPitchRoll(ParentPO.Rotation.Y + ParentPO.ParentRotation.Y,
+            //        ParentPO.Rotation.X + ParentPO.ParentRotation.X,
+            //        ParentPO.Rotation.Z + ParentPO.ParentRotation.Z)
+            //        * Matrix.CreateTranslation(ParentPO.Position + ParentPO.ParentPosition);
+            //}
+
+            MatrixUpdate();
+
+            if (m_AnimatedScale)
             {
-                /* A rule of thumb is ISROT - Identity, Scale, Rotate, Orbit, Translate.
-                   This is the order to multiple your matrices in.
-                   So for the moon and earth example, to place the moon:
-                    Identity - this is just Matrix.Identity (an all 1's matrix).
-                    Scale - Scale the moon to it's proper size.
-                    Rotate - rotate the moon around it's own center
-                    Orbit - this is a two step Translate then Rotate process,
-                            first Translate (move) the moon to it's position relative to the
-                            earth (i.e. if the earth was at 0, 0, 0).  The rotate the moon around
-                            this point to position it in orbit.
-                    Translate - move the moon to the final location, which will be the same
-                            as the location of earth in this case since it's already setup to be in orbit.*/
-                // Calculate the base transformation by combining
-                // translation, rotation, and scaling
-                MatrixUpdate();
-                //BaseWorld = Matrix.CreateScale(ModelScale)
-                //    * Matrix.CreateFromYawPitchRoll(Rotation.Y, Rotation.X, Rotation.Z)
-                //    * Matrix.CreateTranslation(Position);
+                float eGT = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                //if (Child)
-                //{
-                //    BaseWorld *= Matrix.CreateFromYawPitchRoll(ParentPO.Rotation.Y + ParentPO.ParentRotation.Y,
-                //        ParentPO.Rotation.X + ParentPO.ParentRotation.X,
-                //        ParentPO.Rotation.Z + ParentPO.ParentRotation.Z)
-                //        * Matrix.CreateTranslation(ParentPO.Position + ParentPO.ParentPosition);
-                //}
-
-                if (m_AnimatedScale)
-                {
-                    float eGT = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-                    ModelScaleVelocity += ModelScaleAcceleration * eGT;
-                    ModelScale += ModelScaleVelocity * eGT;
-                }
+                ModelScaleVelocity += ModelScaleAcceleration * eGT;
+                ModelScale += ModelScaleVelocity * eGT;
             }
         }
 
         public void Draw()
         {
-            if (Active && Visable)
+            if (Visable & Active)
             {
                 if (XNAModel == null)
                     return;
@@ -155,6 +153,37 @@ namespace Engine
                     ParentPO.Rotation.Z + ParentPO.ParentRotation.Z)
                     * Matrix.CreateTranslation(ParentPO.Position + ParentPO.ParentPosition);
             }
+        }
+        /// <summary>
+        /// If position, rotation and velocity are used.
+        /// </summary>
+        /// <param name="position">Position to spawn at.</param>
+        /// <param name="rotation">Rotation to spawn at.</param>
+        /// <param name="velocity">Initial Velocity to spawn with.</param>
+        public virtual void Spawn(Vector3 position, Vector3 rotation, Vector3 velocity)
+        {
+            Velocity = velocity;
+            Spawn(position, rotation);
+        }
+        /// <summary>
+        /// If only position and rotation are used.
+        /// </summary>
+        /// <param name="position">Position to spawn at.</param>
+        /// <param name="rotation">Rotation to spawn at.</param>
+        public virtual void Spawn(Vector3 position, Vector3 rotation)
+        {
+            Rotation = rotation;
+            Spawn(position);
+        }
+        /// <summary>
+        /// If only position is used.
+        /// </summary>
+        /// <param name="position">Position to spawn at.</param>
+        public virtual void Spawn(Vector3 position)
+        {
+            Active = true;
+            Position = position;
+            MatrixUpdate();
         }
         /// <summary>
         /// Sphere collusion detection. Target sphere will be compared to this class's.

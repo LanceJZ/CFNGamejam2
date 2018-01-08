@@ -14,9 +14,8 @@ namespace CFNGamejam2.Entities
     {
         List<ExplodeParticle> Particles;
         XnaModel Cube;
-        bool IsActive;
 
-        public bool Active { get => IsActive; }
+        public bool Active { get => Enabled; }
 
         public Explode(Game game) : base(game)
         {
@@ -45,29 +44,26 @@ namespace CFNGamejam2.Entities
 
         public override void Update(GameTime gameTime)
         {
-            if (IsActive)
+            bool done = true;
+
+            foreach (ExplodeParticle particle in Particles)
             {
-                bool done = true;
-
-                foreach (ExplodeParticle particle in Particles)
+                if (particle.Active)
                 {
-                    if (particle.Active)
-                    {
-                        done = false;
-                        break;
-                    }
+                    done = false;
+                    break;
                 }
-
-                if (done)
-                    IsActive = false;
-
-                base.Update(gameTime);
             }
+
+            if (done)
+                Enabled = false;
+
+            base.Update(gameTime);
         }
 
         public void Spawn(Vector3 position, float radius, int minCount)
         {
-            IsActive = true;
+            Enabled = true;
             int count = Services.RandomMinMax(minCount, (int)(minCount + radius * 2));
 
             if (count > Particles.Count)
@@ -95,7 +91,7 @@ namespace CFNGamejam2.Entities
             foreach (ExplodeParticle particle in Particles)
             {
                 particle.Active = false;
-                IsActive = false;
+                Enabled = false;
             }
         }
     }

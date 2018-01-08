@@ -8,9 +8,6 @@ using System;
 
 namespace Engine
 {
-    using S = Services;
-    using T = Timer;
-
     public class Plane : PositionedObject, IDrawComponent
     {
         VertexPositionTexture[] Verts = new VertexPositionTexture[6];
@@ -31,8 +28,8 @@ namespace Engine
         {
             base.Initialize();
 
-            PlaneBasicEffect = new BasicEffect(S.GraphicsDM.GraphicsDevice);
-            S.AddDrawableComponent(this);
+            PlaneBasicEffect = new BasicEffect(Engine.Services.GraphicsDM.GraphicsDevice);
+            Engine.Services.AddDrawableComponent(this);
         }
 
         public override void BeginRun()
@@ -55,9 +52,9 @@ namespace Engine
 
             // Set object and camera info
             PlaneBasicEffect.World = BaseWorld;
-            PlaneBasicEffect.View = S.Camera.View;
-            PlaneBasicEffect.Projection = S.Camera.Projection;
-            S.GraphicsDM.GraphicsDevice.SetVertexBuffer(PlaneVertexBuffer);
+            PlaneBasicEffect.View = Engine.Services.Camera.View;
+            PlaneBasicEffect.Projection = Engine.Services.Camera.Projection;
+            Engine.Services.GraphicsDM.GraphicsDevice.SetVertexBuffer(PlaneVertexBuffer);
         }
 
         public void Draw()
@@ -66,13 +63,13 @@ namespace Engine
             foreach (EffectPass pass in PlaneBasicEffect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                S.GraphicsDM.GraphicsDevice.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleList, Verts, 0, 2);
+                Engine.Services.GraphicsDM.GraphicsDevice.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleList, Verts, 0, 2);
             }
         }
 
         public void Create(Texture2D texture)
         {
-            PlaneVertexBuffer = new VertexBuffer(S.GraphicsDM.GraphicsDevice, typeof(VertexPositionTexture),
+            PlaneVertexBuffer = new VertexBuffer(Engine.Services.GraphicsDM.GraphicsDevice, typeof(VertexPositionTexture),
                 Verts.Length, BufferUsage.None);
 
             ChangePlaneTexture(texture);

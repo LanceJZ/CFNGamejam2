@@ -31,6 +31,7 @@ namespace CFNGamejam2
 
         public Ground GroundRef { get => TheGround; }
         public EnemyControl EnemyRef { get => TheEnemy; }
+        public Player PlayerRef { get => ThePlayer; }
         public GameState CurrentMode { get => GameMode; }
 
         public GameLogic(Game game) : base(game)
@@ -40,9 +41,10 @@ namespace CFNGamejam2
             TheEnemy = new EnemyControl(game, this);
 
             // Screen resolution is 1200 X 900.
-            // Y positive on top of window. So down is negative.
-            // X positive is right of window. So to the left is negative.
-            // Z positive is towards the front. So to place objects behind other objects, put them in the negative.
+            // Y positive is Up.
+            // X positive is right of window when camera is at rotation zero.
+            // Z positive is towards the camera when at rotation zero.
+            // Y positive rotation rotates CCW. Zero is facing X positive. Pi/2 faces Z negative.
             game.Components.Add(this);
         }
 
@@ -111,3 +113,9 @@ namespace CFNGamejam2
         }
     }
 }
+/*
+ Make a clear path that is covered by the missile batteries. Make a "road less traveled"
+ that goes around them, where most of the ducks are flying. The flying ducks will drop a bomb
+ on the player, if they can.
+*/
+

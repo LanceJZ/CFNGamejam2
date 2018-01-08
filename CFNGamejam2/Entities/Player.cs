@@ -36,9 +36,6 @@ namespace CFNGamejam2.Entities
             }
 
             PerShotTimer = new Timer(game, 1);
-
-            LoadContent();
-            BeginRun();
         }
 
         public override void Initialize()
@@ -61,6 +58,8 @@ namespace CFNGamejam2.Entities
 
         public override void BeginRun()
         {
+            base.BeginRun();
+
             Turret.Position.Y = 11.5f;
             Gun.Position.X = 13.5f;
             Gun.Position.Y = -2.25f;
@@ -76,8 +75,6 @@ namespace CFNGamejam2.Entities
             Gun.AddAsChildOf(Turret, true, false);
 
             Gun.Rotation.Z = 0.1f;
-
-            base.BeginRun();
         }
 
         public override void Update(GameTime gameTime)
@@ -128,9 +125,9 @@ namespace CFNGamejam2.Entities
             KeyboardState theKeyboard = Keyboard.GetState();
 
             if (theKeyboard.IsKeyDown(Keys.W))
-                MoveUp();
+                MoveForward();
             else if (theKeyboard.IsKeyDown(Keys.S))
-                MoveDown();
+                MoveBackward();
             else
                 StopMovement();
 
@@ -173,7 +170,7 @@ namespace CFNGamejam2.Entities
             int thisOne = 0;
 
 
-            foreach(TankShot shot in Shots)
+            foreach (TankShot shot in Shots)
             {
                 if (!shot.Active)
                 {
@@ -190,24 +187,20 @@ namespace CFNGamejam2.Entities
                 thisOne = Shots.Count - 1;
             }
 
-            //Vector3 vel = new Vector3(VelocityFromAngle(Turret.WorldRotation.Y, 1).X,
-            //    (float)Math.Sin(Gun.Rotation.Z), -VelocityFromAngle(Turret.WorldRotation.Y, 1).Y);
-
-            Vector3 vel = VelocityFromAngle(new Vector2(Turret.WorldRotation.Y, Gun.Rotation.Z), 250);
-
-            Shots[thisOne].Spawn(Gun.TheWoldMatrix.Translation + (vel * 0.2f), vel);
+            Vector3 vel = VelocityFromAngle(new Vector2(Turret.WorldRotation.Y,
+                Gun.Rotation.Z), 250);
+            Shots[Shots.Count - 1].Spawn(Gun.TheWoldMatrix.Translation + (vel * 0.2f),
+                Gun.Rotation, vel);
         }
 
-        void MoveUp()
+        void MoveForward()
         {
-            Velocity.X = VelocityFromAngle(Rotation.Y, Speed).X;
-            Velocity.Z = -VelocityFromAngle(Rotation.Y, Speed).Y;
+            Velocity = VelocityFromAngleY(Rotation.Y, Speed);
         }
 
-        void MoveDown()
+        void MoveBackward()
         {
-            Velocity.X = VelocityFromAngle(Rotation.Y, -Speed).X;
-            Velocity.Z = -VelocityFromAngle(Rotation.Y, -Speed).Y;
+            Velocity = VelocityFromAngleY(Rotation.Y, -Speed);
         }
 
         void RotateCW()

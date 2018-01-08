@@ -9,15 +9,17 @@ using Engine;
 
 namespace CFNGamejam2.Entities
 {
-    public class TankShot : AModel
+    public class Bomb : AModel
     {
         Explode Explosion;
         Timer LifeTimer;
 
-        public TankShot(Game game) : base(game)
+
+        public Bomb(Game game) : base(game)
         {
-            LifeTimer = new Timer(game);
             Explosion = new Explode(game);
+            LifeTimer = new Timer(game, 5);
+
         }
 
         public override void Initialize()
@@ -28,24 +30,31 @@ namespace CFNGamejam2.Entities
 
         public override void LoadContent()
         {
-            LoadModel("Core/Cube");
+            LoadModel("Bomb");
         }
 
         public override void BeginRun()
         {
             base.BeginRun();
 
-            Radius = 1;
         }
 
         public override void Update(GameTime gameTime)
         {
             if (LifeTimer.Elapsed)
+            {
                 Active = false;
+            }
 
             if (Position.Y < -4)
             {
                 HitTarget();
+            }
+
+            if (Rotation.Z < -MathHelper.PiOver2)
+            {
+                RotationAcceleration.Z = 0;
+                RotationVelocity.Z = 0;
             }
 
             base.Update(gameTime);
@@ -53,17 +62,19 @@ namespace CFNGamejam2.Entities
 
         public override void Spawn(Vector3 position, Vector3 rotation, Vector3 velocity)
         {
-            LifeTimer.Reset(3);
+            position.Y -= 5;
             base.Spawn(position, rotation, velocity);
-            Acceleration.Y = -30;
+            Acceleration.Y = -50;
+            RotationAcceleration.Z = -MathHelper.Pi;
+            LifeTimer.Reset();
         }
 
         public void HitTarget()
         {
             Active = false;
-            Explosion.Spawn(Position, Radius * 0.25f, 30);
+            Velocity.Y = 0;
+            Acceleration.Y = 0;
+            Explosion.Spawn(Position, Radius * 0.5f, 100);
         }
-
-
     }
 }
