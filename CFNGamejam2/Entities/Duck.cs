@@ -17,9 +17,10 @@ namespace CFNGamejam2.Entities
 
     public class Duck : AModel
     {
-        GameLogic GameLogicRef;
+        GameLogic RefGameLogic;
         List<Bomb> Bombs;
         AModel[] Wings = new AModel[2];
+        Explode Explosion;
 
         Timer FlapTimer;
         Timer GlideTimer;
@@ -33,12 +34,13 @@ namespace CFNGamejam2.Entities
 
         public Duck(Game game, GameLogic gameLogic) : base(game)
         {
-            GameLogicRef = gameLogic;
+            RefGameLogic = gameLogic;
 
             for (int i = 0; i < 2; i++)
                Wings[i] = new AModel(game);
 
             Bombs = new List<Bomb>();
+            Explosion = new Explode(game);
 
             FlapTimer = new Timer(game, 3);
             GlideTimer = new Timer(game, 5);
@@ -81,7 +83,7 @@ namespace CFNGamejam2.Entities
             switch (CurrentMode)
             {
                 case Mode.Flap:
-                    if (Position.Y > 130)
+                    if (Position.Y > 100)
                     {
                         ChangeToGlide();
                         return;
@@ -90,13 +92,13 @@ namespace CFNGamejam2.Entities
                     FlapWings();
                     break;
                 case Mode.Glide:
-                    if (Position.Y < 20)
+                    if (Position.Y < 30)
                     {
                         ChangeToFlap();
                         return;
                     }
 
-                    if (GlideTimer.Elapsed && Position.Y < 100)
+                    if (GlideTimer.Elapsed && Position.Y < 60)
                     {
                         ChangeToFlap();
                     }
@@ -121,8 +123,22 @@ namespace CFNGamejam2.Entities
             }
 
             CheckOffMap();
+            CheckHit();
 
             base.Update(gameTime);
+        }
+
+        void CheckHit()
+        {
+            foreach(TankShot shot in RefGameLogic.RefPlayer.ShotsRef)
+            {
+                if (SphereIntersect(shot))
+                {
+                    Active = false;
+                    Explosion.Spawn(Position, 3, 20);
+                    shot.Active = false;
+                }
+            }
         }
 
         void ChangeToFlap()
@@ -151,13 +167,13 @@ namespace CFNGamejam2.Entities
 
         void ChangeHeading()
         {
-            CurrentHeading = GameLogicRef.PlayerRef.Position;
+            CurrentHeading = RefGameLogic.RefPlayer.Position;
         }
 
         void CheckOffMap()
         {
             if (Vector2.Distance(new Vector2(Position.X, Position.Z), Vector2.Zero) >
-                GameLogicRef.GroundRef.TheBorder)
+                RefGameLogic.RefGround.TheBorder)
             {
                 ChangeHeading();
             }
@@ -165,7 +181,7 @@ namespace CFNGamejam2.Entities
 
         void DoesDuckDropBomb()
         {
-            if (Vector3.Distance(Position, GameLogicRef.PlayerRef.Position) < 50 + Position.Y)
+            if (Vector3.Distance(Position, RefGameLogic.RefPlayer.Position) < 50 + Position.Y)
             {
                 DropBombTimer.Reset(Services.RandomMinMax(2.5f, 5.5f));
                 DropBomb();

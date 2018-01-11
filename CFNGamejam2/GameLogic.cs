@@ -29,15 +29,15 @@ namespace CFNGamejam2
         float TheGameScale = 1.0f;
         int Score = 0;
 
-        public Ground GroundRef { get => TheGround; }
-        public EnemyControl EnemyRef { get => TheEnemy; }
-        public Player PlayerRef { get => ThePlayer; }
+        public Ground RefGround { get => TheGround; }
+        public EnemyControl RefEnemy { get => TheEnemy; }
+        public Player RefPlayer { get => ThePlayer; }
         public GameState CurrentMode { get => GameMode; }
 
         public GameLogic(Game game) : base(game)
         {
+            TheGround = new Ground(game, this);
             ThePlayer = new Player(game, this);
-            TheGround = new Ground(game);
             TheEnemy = new EnemyControl(game, this);
 
             // Screen resolution is 1200 X 900.
@@ -52,8 +52,8 @@ namespace CFNGamejam2
         {
 
             base.Initialize();
-            Services.AddLoadable(this);
-            Services.AddBeginable(this);
+            LoadContent();
+            BeginRun();
         }
 
         public void LoadContent()
@@ -63,7 +63,7 @@ namespace CFNGamejam2
         public void BeginRun()
         {
             Services.Camera.Target = new Vector3(0, 50, 0);
-
+            NewGame();
         }
 
         public override void Update(GameTime gameTime)

@@ -24,7 +24,7 @@
     <AssemblyFileVersionSettings>MMddStamp.DayOfYearStamp.MonthStamp.TimeStamp</AssemblyFileVersionSettings>
     <AssemblyInfoVersionSettings>YearStamp.DateStamp.DeltaDayStamp.Increment</AssemblyInfoVersionSettings>
     <PrimaryVersionType>AssemblyVersionAttribute</PrimaryVersionType>
-    <AssemblyVersion>1.425.8.0101</AssemblyVersion>
+    <AssemblyVersion>1.560.11.0101</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -81,11 +81,14 @@
     <Compile Include="Entities\EnemyControl.cs" />
     <Compile Include="Entities\Explode.cs" />
     <Compile Include="Entities\ExplodeParticle.cs" />
+    <Compile Include="Entities\Gateway.cs" />
     <Compile Include="Entities\Ground.cs" />
     <Compile Include="Entities\Missile.cs" />
     <Compile Include="Entities\MissileBattery.cs" />
     <Compile Include="Entities\Player.cs" />
+    <Compile Include="Entities\Rock.cs" />
     <Compile Include="Entities\TankShot.cs" />
+    <Compile Include="Entities\Wall.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameLogic.cs" />
     <Compile Include="Program.cs" />

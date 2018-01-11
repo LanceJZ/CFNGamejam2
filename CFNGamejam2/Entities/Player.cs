@@ -11,7 +11,7 @@ namespace CFNGamejam2.Entities
 {
     public class Player : AModel
     {
-        GameLogic GameLogicRef;
+        GameLogic RefGameLogic;
         List<TankShot> Shots;
         AModel Turret;
         AModel Gun;
@@ -22,10 +22,13 @@ namespace CFNGamejam2.Entities
         KeyboardState LastKeyState;
 
         int Speed = 50;
+        bool WasBumped;
+
+        public List<TankShot> ShotsRef { get => Shots; }
 
         public Player(Game game, GameLogic gameLogic) : base(game)
         {
-            GameLogicRef = gameLogic;
+            RefGameLogic = gameLogic;
             Shots = new List<TankShot>();
             Turret = new AModel(game);
             Gun = new AModel(game);
@@ -74,12 +77,14 @@ namespace CFNGamejam2.Entities
             Turret.AddAsChildOf(this, true, false);
             Gun.AddAsChildOf(Turret, true, false);
 
-            Gun.Rotation.Z = 0.1f;
+            NewGame();
         }
 
         public override void Update(GameTime gameTime)
         {
-            Input();
+            if (!WasBumped)
+                Input();
+
             KeepInBorders();
 
             if (Gun.Rotation.Z < 0)
@@ -93,30 +98,47 @@ namespace CFNGamejam2.Entities
             Services.Camera.Target = Position;
 
             base.Update(gameTime);
+            WasBumped = false;
+        }
+
+        public void Bumped(Vector3 position)
+        {
+            Velocity = (Velocity * 0.1f) * -1;
+            Velocity += VelocityFromVectorsY(position, Position, 75);
+            WasBumped = true;
+        }
+
+        void NewGame()
+        {
+            Gun.Rotation.Z = 0.1f;
+            Turret.Rotation.Y = 0;
+            Position.Y = 0;
+            Position.Z = RefGameLogic.RefGround.TheBorder - 30;
+            Rotation.Y = MathHelper.PiOver2;
         }
 
         void KeepInBorders()
         {
-            int edge = 200;
+            int edge = 150;
 
-            if (Position.X > GameLogicRef.GroundRef.TheBorder - edge)
+            if (Position.X > RefGameLogic.RefGround.TheBorder - edge)
             {
-                Position.X = GameLogicRef.GroundRef.TheBorder - edge;
+                Position.X = RefGameLogic.RefGround.TheBorder - edge;
             }
 
-            if (Position.X < -GameLogicRef.GroundRef.TheBorder + edge)
+            if (Position.X < -RefGameLogic.RefGround.TheBorder + edge)
             {
-                Position.X = -GameLogicRef.GroundRef.TheBorder + edge;
+                Position.X = -RefGameLogic.RefGround.TheBorder + edge;
             }
 
-            if (Position.Z > GameLogicRef.GroundRef.TheBorder - edge)
+            if (Position.Z > RefGameLogic.RefGround.TheBorder - 20)
             {
-                Position.Z = GameLogicRef.GroundRef.TheBorder - edge;
+                Position.Z = RefGameLogic.RefGround.TheBorder - 20;
             }
 
-            if (Position.Z < -GameLogicRef.GroundRef.TheBorder + edge)
+            if (Position.Z < -RefGameLogic.RefGround.TheBorder)
             {
-                Position.Z = -GameLogicRef.GroundRef.TheBorder + edge;
+                Position.Z = -RefGameLogic.RefGround.TheBorder;
             }
         }
 
@@ -225,12 +247,12 @@ namespace CFNGamejam2.Entities
 
         void RotateTurretCW()
         {
-            Turret.RotationVelocity.Y = 0.25f;
+            Turret.RotationVelocity.Y = 0.35f;
         }
 
         void RotateTurretCC()
         {
-            Turret.RotationVelocity.Y = -0.25f;
+            Turret.RotationVelocity.Y = -0.35f;
         }
 
         void StopTurretRotation()
@@ -241,13 +263,13 @@ namespace CFNGamejam2.Entities
         void PointGunUp()
         {
             if (Gun.Rotation.Z < 0.3f)
-                Gun.RotationVelocity.Z = 0.12f;
+                Gun.RotationVelocity.Z = 0.25f;
         }
 
         void PointGunDown()
         {
             if (Gun.Rotation.Z > 0)
-                Gun.RotationVelocity.Z = -0.15f;
+                Gun.RotationVelocity.Z = -0.5f;
         }
 
         void StopGunRotation()

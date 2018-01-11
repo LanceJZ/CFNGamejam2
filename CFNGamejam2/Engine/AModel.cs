@@ -25,7 +25,6 @@ namespace Engine
         public XnaModel XNAModel { get; private set; }
         public Matrix TheWoldMatrix { get => BaseWorld; }
         public BoundingSphere Sphere { get => XNAModel.Meshes[0].BoundingSphere; }
-        public float SphereRadius { get => XNAModel.Meshes[0].BoundingSphere.Radius; }
         public bool AnimatedScale { get => m_AnimatedScale; set => m_AnimatedScale = value; }
         public bool Visable { get => Enabled; set => Enabled = value; }
 
@@ -182,6 +181,7 @@ namespace Engine
         public virtual void Spawn(Vector3 position)
         {
             Active = true;
+            Hit = false;
             Position = position;
             MatrixUpdate();
         }
@@ -190,15 +190,16 @@ namespace Engine
         /// Will return true of they intersect on the X and Y plane.
         /// The Z plane is ignored.
         /// </summary>
-        /// <param name="Target">Target Positioned Object.</param>
+        /// <param name="target">Target Positioned Object.</param>
         /// <returns></returns>
-        public bool SphereIntersect2D(AModel Target)
+        public bool SphereIntersect2DZ(AModel target)
         {
-            float distanceX = Target.Position.X - Position.X;
-            float distanceY = Target.Position.Y - Position.Y;
-            float radius = (SphereRadius * Scale) + (Target.SphereRadius * Scale);
+            float distanceX = target.Position.X - Position.X;
+            float distanceY = target.Position.Y - Position.Y;
+            float radius = ((Sphere.Radius * Scale) * 0.8f) +
+                ((target.Sphere.Radius * target.Scale) * 0.8f);
 
-            if ((distanceX * distanceX) + (distanceY * distanceY) < radius * radius)
+            if ((distanceX * distanceX) + (distanceY * distanceY) < radius)
                 return true;
 
             return false;
@@ -207,16 +208,14 @@ namespace Engine
         /// <summary>
         /// Sphere collusion detection. Target sphere will be compared to this class's.
         /// </summary>
-        /// <param name="Target">Target Positioned Object.</param>
+        /// <param name="target">Target Positioned Object.</param>
         /// <returns></returns>
-        public bool SphereIntersect(AModel Target)
+        public bool SphereIntersect(AModel target)
         {
-            float distanceX = Target.Position.X - Position.X;
-            float distanceY = Target.Position.Y - Position.Y;
-            float distanceZ = Target.Position.Z - Position.Z;
-            float radius = (SphereRadius * Scale) + (Target.SphereRadius * Scale);
+            float radius = ((Sphere.Radius * Scale) * 0.8f) +
+                ((target.Sphere.Radius * target.Scale) * 0.8f);
 
-            if ((distanceX * distanceX) + (distanceY * distanceY) + (distanceZ * distanceZ) < radius * radius)
+            if (Vector3.Distance(Position, target.Position) < radius)
                 return true;
 
             return false;
@@ -228,8 +227,8 @@ namespace Engine
             {
                 XNAModel = model;
 
-                ModelTransforms = new Matrix[XNAModel.Bones.Count];
-                XNAModel.CopyAbsoluteBoneTransformsTo(ModelTransforms);
+                //ModelTransforms = new Matrix[XNAModel.Bones.Count];
+                //XNAModel.CopyAbsoluteBoneTransformsTo(ModelTransforms);
             }
         }
 

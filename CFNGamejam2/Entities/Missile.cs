@@ -11,13 +11,15 @@ namespace CFNGamejam2.Entities
 {
     public class Missile : AModel
     {
+        GameLogic RefGameLogic;
         Explode Explosion;
         Timer LifeTimer;
 
         Vector3 Target;
 
-        public Missile(Game game) : base(game)
+        public Missile(Game game, GameLogic gameLogic) : base(game)
         {
+            RefGameLogic = gameLogic;
             LifeTimer = new Timer(game);
             Explosion = new Explode(game);
         }
@@ -51,7 +53,7 @@ namespace CFNGamejam2.Entities
                 HitTarget();
             }
 
-
+            Acceleration.Y = -VelocityFromAngleY(Rotation.Z, 45).X;
 
             base.Update(gameTime);
         }
@@ -62,8 +64,7 @@ namespace CFNGamejam2.Entities
             LifeTimer.Reset(3);
             base.Spawn(position, rotation, velocity);
             Acceleration = VelocityFromAngleY(rotation.Y, 80);
-            Acceleration.Y = -20;
-            RotationAcceleration.Z = -0.005f;
+            RotationAcceleration.Z = -Vector3.Distance(position, target) * 0.00001f;
         }
 
         public void HitTarget()

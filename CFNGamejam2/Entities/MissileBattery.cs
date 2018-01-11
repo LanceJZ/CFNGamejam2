@@ -12,7 +12,7 @@ namespace CFNGamejam2.Entities
 {
     public class MissileBattery : AModel
     {
-        GameLogic GameLogicRef;
+        GameLogic RefGameLogic;
         AModel Turret;
         List<Missile> Missiles;
         Timer ChangeTargetTimer;
@@ -22,7 +22,7 @@ namespace CFNGamejam2.Entities
 
         public MissileBattery(Game game, GameLogic gameLogic) : base(game)
         {
-            GameLogicRef = gameLogic;
+            RefGameLogic = gameLogic;
             Turret = new AModel(game);
             Missiles = new List<Missile>();
             ChangeTargetTimer = new Timer(game);
@@ -48,6 +48,7 @@ namespace CFNGamejam2.Entities
             Turret.Position.Y = 20 + 19;
             Turret.AddAsChildOf(this, true, false);
             Turret.MatrixUpdate();
+            Rotation.Y = -MathHelper.PiOver2;
         }
 
         public override void Update(GameTime gameTime)
@@ -56,7 +57,10 @@ namespace CFNGamejam2.Entities
             {
                 Turret.RotationVelocity.Y = 0;
                 if (FireTimer.Elapsed)
-                    FireMissiles();
+                {
+                    if (Vector3.Distance(Position, CurrentTarget) < 500)
+                        FireMissiles();
+                }
             }
             else
             {
@@ -96,6 +100,7 @@ namespace CFNGamejam2.Entities
             for (int i = 0; i < 2; i++)
             {
                 bool spawnNew = true;
+                thisOne[i] = 0;
 
                 foreach (Missile missile in Missiles)
                 {
@@ -110,8 +115,8 @@ namespace CFNGamejam2.Entities
 
                 if (spawnNew)
                 {
-                    Missiles.Add(new Missile(Game));
-                    thisOne[i] = Missiles.Count - 1;
+                    thisOne[i] = Missiles.Count;
+                    Missiles.Add(new Missile(Game, RefGameLogic));
                 }
 
                 Missiles[thisOne[i]].Spawn(launchTubes[i], Turret.WorldRotation, target, CurrentTarget);
@@ -120,7 +125,7 @@ namespace CFNGamejam2.Entities
 
         void ChangeTarget()
         {
-            CurrentTarget = GameLogicRef.PlayerRef.Position;
+            CurrentTarget = RefGameLogic.RefPlayer.Position;
         }
 
     }
