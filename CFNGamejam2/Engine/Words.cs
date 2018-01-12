@@ -17,6 +17,7 @@ namespace Engine
         float Scale;
         int TextSize;
         public Vector3 Position = Vector3.Zero;
+        public Vector3 Rotation = Vector3.Zero;
 
         public Words (Game game) : base(game)
         {
@@ -90,6 +91,28 @@ namespace Engine
             }
 
             ChangePosition();
+            ChangeRotation();
+        }
+
+        public void Change(Vector3 position, Vector3 rotation)
+        {
+            ChangePosition(position);
+            ChangeRotation(rotation);
+        }
+
+        public void ChangeRotation()
+        {
+            foreach (AModel number in WordModels)
+            {
+                number.Rotation = Rotation;
+                number.MatrixUpdate();
+            }
+        }
+
+        public void ChangeRotation(Vector3 rotation)
+        {
+            Rotation = rotation;
+            ChangeRotation();
         }
 
         public void ChangePosition()

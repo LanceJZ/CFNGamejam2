@@ -45,18 +45,10 @@ namespace CFNGamejam2.Entities
 
         public void BeginRun()
         {
-            //TheDuck.Position.X = 300;
-            //TheDuck.Position.Y = 200;
-            //TheDuck.Position.Z = -600;
-
             int border = RefGameLogic.RefGround.TheBorder;
 
             for (int i = 0; i < 4; i++)
-                SpawnDuck(new Vector3(Services.RandomMinMax(-border, border), 200, border));
-
-            //TheBattery.Position.X = -200;
-            //TheBattery.Position.Y = 20;
-            //TheBattery.Position.Z = -400;
+                SpawnDuck(new Vector3(Services.RandomMinMax(-border, border), 200, border + 500));
 
             TheGateway.Position.Z = -1000;
             TheGateway.Position.Y = 20;

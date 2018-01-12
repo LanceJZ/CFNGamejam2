@@ -47,7 +47,8 @@ namespace Engine
             else
             {
                 Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4,
-                    (float)Game.Window.ClientBounds.Width / (float)Game.Window.ClientBounds.Height, near, far);
+                    (float)Game.Window.ClientBounds.Width / (float)Game.Window.ClientBounds.Height,
+                    near, far);
             }
         }
         #endregion
@@ -75,6 +76,10 @@ namespace Engine
             cameraRotation = Matrix.CreateFromAxisAngle(cameraRotation.Forward, Rotation.Z)
                 * Matrix.CreateFromAxisAngle(cameraRotation.Right, Rotation.X)
                 * Matrix.CreateFromAxisAngle(cameraRotation.Up, Rotation.Y);
+
+            //This reads the camera rotation.
+
+
             // If Orthographic make sure the camera is always pointing forward.
             if (Orthographic)
                 Target = Position + cameraRotation.Forward;

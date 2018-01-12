@@ -28,6 +28,7 @@ namespace CFNGamejam2.Entities
         XnaModel MountainTilesModel;
         XnaModel WaterTileModel;
 
+        Vector3 Position;
         int Border;
 
         public int TheBorder { get => Border; }
@@ -126,45 +127,33 @@ namespace CFNGamejam2.Entities
                 }
             }
 
-            for (int i = 0; i < 30; i++)
-            {
-                Vector3 loc;
-                Vector3 rot;
-                LargeRocks.Add(new Rock(Game, RefGameLogic));
-                LargeRocks.Last().SetModel(LargeRockModel);
-                loc = new Vector3(Services.RandomMinMax(-Border - 100, Border - 100),
-                    Services.RandomMinMax(-20, -10), Services.RandomMinMax(-Border - 100, Border - 100));
-                rot = new Vector3(Services.RandomMinMax(0, MathHelper.Pi),
-                    Services.RandomMinMax(0, MathHelper.Pi), Services.RandomMinMax(0, MathHelper.Pi));
-                LargeRocks.Last().Spawn(loc, rot);
-                MedRocks.Add(new Rock(Game, RefGameLogic));
-                MedRocks.Last().SetModel(MedRockModel);
-                loc = new Vector3(Services.RandomMinMax(-Border - 60, Border - 60),
-                    Services.RandomMinMax(-15, -5), Services.RandomMinMax(-Border - 60, Border - 60));
-                rot = new Vector3(Services.RandomMinMax(0, MathHelper.Pi),
-                    Services.RandomMinMax(0, MathHelper.Pi), Services.RandomMinMax(0, MathHelper.Pi));
-                MedRocks.Last().Spawn(loc, rot);
-                SmallRocks.Add(new Rock(Game, RefGameLogic));
-                SmallRocks.Last().SetModel(SmallRockModel);
-                loc = new Vector3(Services.RandomMinMax(-Border, Border),
-                    Services.RandomMinMax(-10, -2), Services.RandomMinMax(-Border, Border));
-                rot = new Vector3(Services.RandomMinMax(0, MathHelper.Pi),
-                    Services.RandomMinMax(0, MathHelper.Pi), Services.RandomMinMax(0, MathHelper.Pi));
-                SmallRocks.Last().Spawn(loc, rot);
-            }
-
             for (int i = 0; i < 10; i++)
             {
-                Vector3 loc;
-                Vector3 rot;
                 ExtraLargeRocks.Add(new Rock(Game, RefGameLogic));
                 ExtraLargeRocks.Last().SetModel(ExtraLargeRockModel);
-                loc = new Vector3(Services.RandomMinMax(-Border / 2, Border / 2),
-                    Services.RandomMinMax(-30, -10), Services.RandomMinMax(-Border / 2, Border / 2));
-                rot = new Vector3(Services.RandomMinMax(0, MathHelper.Pi),
-                    Services.RandomMinMax(0, MathHelper.Pi), Services.RandomMinMax(0, MathHelper.Pi));
-                ExtraLargeRocks.Last().Spawn(loc, rot);
+                SpawnExtraLargeRock(ExtraLargeRocks.Last());
             }
+
+            for (int i = 0; i < 30; i++)
+            {
+                LargeRocks.Add(new Rock(Game, RefGameLogic));
+                LargeRocks.Last().SetModel(LargeRockModel);
+                SpawnLargeRock(LargeRocks.Last());
+
+                MedRocks.Add(new Rock(Game, RefGameLogic));
+                MedRocks.Last().SetModel(MedRockModel);
+                SpawnMedRock(MedRocks.Last());
+
+                SmallRocks.Add(new Rock(Game, RefGameLogic));
+                SmallRocks.Last().SetModel(SmallRockModel);
+                SpawnSmallRock(SmallRocks.Last());
+            }
+
+            Vector3[] path = new Vector3[2];
+            path[0] = new Vector3(0, -11, -Border);
+            path[1] = new Vector3(0, -11, Border);
+
+            ClearPath(path);
         }
 
         public override void Update(GameTime gameTime)
@@ -173,9 +162,104 @@ namespace CFNGamejam2.Entities
             base.Update(gameTime);
         }
 
-        public void ClearPath(Vector3 start, Vector3 end)
+        public void ClearPath(Vector3[] path)
         {
+            bool working = true;
+            float radius = 200;
 
+            while(working)
+            {
+                working = false;
+                Position = path[0];
+
+                foreach (Vector3 spot in path)
+                {
+                    while (!MoveTowardsPoint(spot))
+                    {
+                        foreach (Rock rock in ExtraLargeRocks)
+                        {
+                            if (rock.CirclesIntersect(spot, radius))
+                            {
+                                working = true;
+                                SpawnExtraLargeRock(rock);
+                            }
+                        }
+
+                        foreach (Rock rock in LargeRocks)
+                        {
+                            if (rock.CirclesIntersect(spot, radius))
+                            {
+                                working = true;
+                                SpawnLargeRock(rock);
+                            }
+                        }
+
+                        foreach (Rock rock in MedRocks)
+                        {
+                            if (rock.CirclesIntersect(spot, radius))
+                            {
+                                working = true;
+                                SpawnMedRock(rock);
+                            }
+                        }
+
+                        foreach (Rock rock in SmallRocks)
+                        {
+                            if (rock.CirclesIntersect(spot, radius))
+                            {
+                                working = true;
+                                SpawnSmallRock(rock);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        bool MoveTowardsPoint(Vector3 goal)
+        {
+            if (Position == goal)
+                return true;
+
+            Vector3 direction = Vector3.Normalize(goal - Position);
+            Position += direction * 0.1f;
+
+            //if (Math.Abs(Vector3.Dot(direction, Vector3.Normalize(goal - Position)) + 1) < 0.1f)
+            //    Position = goal; //Does the same as below, but would take more CPU.
+
+            if (Vector3.Distance(direction, Vector3.Normalize(Position - goal)) < 0.1f)
+                Position = goal;
+
+            return Position == goal;
+        }
+
+        void SpawnExtraLargeRock(Rock rock)
+        {
+            SpawnRock(rock, -30, -10, Border / 2);
+        }
+
+        void SpawnLargeRock(Rock rock)
+        {
+            SpawnRock(rock, -20, -10, Border - 100);
+        }
+
+        void SpawnMedRock(Rock rock)
+        {
+            SpawnRock(rock, -15, -5, Border - 60);
+        }
+
+        void SpawnSmallRock(Rock rock)
+        {
+            SpawnRock(rock, -10, -2, Border - 20);
+        }
+
+        void SpawnRock(Rock rock, int hightMin, int hightMax, int border)
+        {
+            rock.Spawn(new Vector3(Services.RandomMinMax(-border, border),
+                Services.RandomMinMax(hightMin, hightMax), Services.RandomMinMax(-border, border)),
+                new Vector3(Services.RandomMinMax(0, MathHelper.Pi),
+                Services.RandomMinMax(0, MathHelper.Pi),
+                Services.RandomMinMax(0, MathHelper.Pi)));
         }
     }
 }

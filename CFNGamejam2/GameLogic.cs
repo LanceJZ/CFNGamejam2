@@ -23,6 +23,7 @@ namespace CFNGamejam2
         Player ThePlayer;
         Ground TheGround;
         EnemyControl TheEnemy;
+        UI TheUI;
 
         GameState GameMode = GameState.MainMenu;
 
@@ -32,10 +33,12 @@ namespace CFNGamejam2
         public Ground RefGround { get => TheGround; }
         public EnemyControl RefEnemy { get => TheEnemy; }
         public Player RefPlayer { get => ThePlayer; }
+        public UI RefUI { get => TheUI; }
         public GameState CurrentMode { get => GameMode; }
 
         public GameLogic(Game game) : base(game)
         {
+            TheUI = new UI(game, this);
             TheGround = new Ground(game, this);
             ThePlayer = new Player(game, this);
             TheEnemy = new EnemyControl(game, this);
