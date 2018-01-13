@@ -167,7 +167,16 @@ namespace CFNGamejam2.Entities
 
         void ChangeHeading()
         {
-            CurrentHeading = RefGameLogic.RefPlayer.Position;
+            if (RefGameLogic.RefPlayer.Active)
+            {
+                CurrentHeading = RefGameLogic.RefPlayer.Position;
+            }
+            else
+            {
+                int border = RefGameLogic.RefGround.TheBorder;
+                CurrentHeading = new Vector3(Services.RandomMinMax(-border, border),
+                    0, Services.RandomMinMax( border - 500, border + 500));
+            }
         }
 
         void CheckOffMap()
@@ -190,6 +199,9 @@ namespace CFNGamejam2.Entities
 
         void DropBomb()
         {
+            if (!RefGameLogic.RefPlayer.Active)
+                return;
+
             bool spawnNew = true;
             int thisOne = 0;
 
@@ -206,7 +218,7 @@ namespace CFNGamejam2.Entities
 
             if (spawnNew)
             {
-                Bombs.Add(new Bomb(Game));
+                Bombs.Add(new Bomb(Game, RefGameLogic));
                 thisOne = Bombs.Count - 1;
             }
 

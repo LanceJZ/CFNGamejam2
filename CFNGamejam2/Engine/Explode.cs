@@ -6,9 +6,8 @@ using XnaModel = Microsoft.Xna.Framework.Graphics.Model;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using Engine;
 
-namespace CFNGamejam2.Entities
+namespace Engine
 {
     public class Explode : GameComponent, IBeginable, IUpdateableComponent, ILoadContent
     {
@@ -22,14 +21,14 @@ namespace CFNGamejam2.Entities
             Particles = new List<ExplodeParticle>();
 
             game.Components.Add(this);
-            LoadContent();
-            BeginRun();
         }
 
         public override void Initialize()
         {
 
             base.Initialize();
+            LoadContent();
+            BeginRun();
         }
 
         public void LoadContent()

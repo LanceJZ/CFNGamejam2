@@ -74,19 +74,21 @@ namespace CFNGamejam2.Entities
             TheScoreWords.Change(viewPos + new Vector3(-50, 0, 0), camRot);
         }
 
-        public void ScoreUpdate()
+        public void ScoreUpdate(int score)
         {
-
+            TheScore.ChangeNumber(score);
         }
 
         public void GameOver()
         {
-
+            TheGameOverWords.ShowWords(true);
+            TheStartANewGameWords.ShowWords(true);
         }
 
         public void NewGame()
         {
-
+            TheGameOverWords.ShowWords(false);
+            TheStartANewGameWords.ShowWords(false);
         }
     }
 }

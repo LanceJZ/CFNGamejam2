@@ -55,6 +55,8 @@ namespace CFNGamejam2.Entities
 
             Acceleration.Y = -VelocityFromAngleY(Rotation.Z, 45).X;
 
+            CheckCollusion();
+
             base.Update(gameTime);
         }
 
@@ -71,6 +73,15 @@ namespace CFNGamejam2.Entities
         {
             Active = false;
             Explosion.Spawn(Position, Radius, 50);
+        }
+
+        void CheckCollusion()
+        {
+            if (SphereIntersect(RefGameLogic.RefPlayer))
+            {
+                HitTarget();
+                RefGameLogic.RefPlayer.HitDamage(1);
+            }
         }
     }
 }

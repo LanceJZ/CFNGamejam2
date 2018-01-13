@@ -66,7 +66,7 @@ namespace CFNGamejam2
         public void BeginRun()
         {
             Services.Camera.Target = new Vector3(0, 50, 0);
-            NewGame();
+            GameMode = GameState.MainMenu;
         }
 
         public override void Update(GameTime gameTime)
@@ -76,22 +76,31 @@ namespace CFNGamejam2
             base.Update(gameTime);
         }
 
-        public void SwitchToAttract()
+        public void SwitchToMainMenu()
         {
             GameMode = GameState.MainMenu;
         }
 
         public void GameOver()
         {
+            GameMode = GameState.MainMenu;
         }
 
+        public void NewGame()
+        {
+            Score = 0;
+            GameMode = GameState.InPlay;
+            RefUI.NewGame();
+            RefEnemy.NewGame();
+            RefPlayer.NewGame();
+        }
 
         void GameStateSwitch()
         {
             switch (GameMode)
             {
                 case GameState.InPlay:
-                    GamePlay();
+                    InPlay();
                     break;
                 case GameState.MainMenu:
                     MainMenu();
@@ -99,20 +108,22 @@ namespace CFNGamejam2
             }
         }
 
-        public void NewGame()
-        {
-            Score = 0;
-            GameMode = GameState.InPlay;
-        }
-
         void MainMenu()
         {
+            KeyboardState theKeyboard = Keyboard.GetState();
 
+            if (theKeyboard.IsKeyDown(Keys.Enter))
+            {
+                NewGame();
+            }
+
+            RefPlayer.Active = false; //TODO: Active Dependent is not working correctly.
+            //TODO: Something is setting Active = true at runtime after it has been set Active = false.
         }
 
-        void GamePlay()
+        void InPlay()
         {
-
+            RefPlayer.Active = true;
         }
     }
 }

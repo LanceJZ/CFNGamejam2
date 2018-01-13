@@ -13,6 +13,8 @@ namespace CFNGamejam2.Entities
     {
         GameLogic RefGameLogic;
         List<TankShot> Shots;
+        AModel HealthBar;
+        AModel HealthBack;
         AModel Turret;
         AModel Gun;
         AModel[] Treads = new AModel[2];
@@ -22,6 +24,7 @@ namespace CFNGamejam2.Entities
         KeyboardState LastKeyState;
 
         int Speed = 50;
+        int Health = 10;
         bool WasBumped;
 
         public List<TankShot> ShotsRef { get => Shots; }
@@ -32,6 +35,8 @@ namespace CFNGamejam2.Entities
             Shots = new List<TankShot>();
             Turret = new AModel(game);
             Gun = new AModel(game);
+            HealthBar = new AModel(game);
+            HealthBack = new AModel(game);
 
             for (int i = 0; i < 2; i++)
             {
@@ -52,6 +57,7 @@ namespace CFNGamejam2.Entities
             LoadModel("TankBody");
             Turret.LoadModel("TankTurret");
             Gun.LoadModel("TankGun");
+            HealthBar.LoadModel("Core/Cube");
 
             for (int i = 0; i < 2; i++)
             {
@@ -66,6 +72,12 @@ namespace CFNGamejam2.Entities
             Turret.Position.Y = 11.5f;
             Gun.Position.X = 13.5f;
             Gun.Position.Y = -2.25f;
+            HealthBar.DefuseColor = new Vector3(0, 200, 0);
+            HealthBack.Position.Y = 24;
+            //HealthBack.Position.Z = -1; //If facing camera;
+            HealthBack.ModelScale.Y = 10;
+            HealthBack.ModelScale.Z = 0.5f;
+            HealthBack.ModelScale.X = 0.5f;
 
             for (int i = 0; i < 2; i++)
             {
@@ -76,29 +88,21 @@ namespace CFNGamejam2.Entities
 
             Turret.AddAsChildOf(this, true, false);
             Gun.AddAsChildOf(Turret, true, false);
+            HealthBar.AddAsChildOf(this, true, false);
+            HealthBack.AddAsChildOf(this, true, false);
 
-            NewGame();
+            GameOver();
         }
 
         public override void Update(GameTime gameTime)
         {
-            if (!WasBumped)
-                Input();
-
-            KeepInBorders();
-
-            if (Gun.Rotation.Z < 0)
-                Gun.Rotation.Z = 0;
-
-            if (Gun.Rotation.Z > 0.3f)
-                Gun.Rotation.Z = 0.3f;
-
-
-            Services.Camera.Position.Z = 600 + Position.Z;
-            Services.Camera.Target = Position;
-
+            InPlay();
             base.Update(gameTime);
-            WasBumped = false;
+        }
+
+        public override void Draw()
+        {
+            base.Draw();
         }
 
         public void Bumped(Vector3 position)
@@ -108,13 +112,56 @@ namespace CFNGamejam2.Entities
             WasBumped = true;
         }
 
-        void NewGame()
+        public void HitDamage(int damage)
         {
+            Health -= damage;
+            HealthBar.ModelScale.Y = Health / 2;
+            HealthBar.Position.Y = 19.5f + HealthBar.ModelScale.Y;
+
+            if (Health <= 0)
+            {
+                GameOver();
+            }
+        }
+
+        public void NewGame()
+        {
+            Active = true;
             Gun.Rotation.Z = 0.1f;
             Turret.Rotation.Y = 0;
             Position.Y = 0;
-            Position.Z = RefGameLogic.RefGround.TheBorder - 30;
             Rotation.Y = MathHelper.PiOver2;
+            Health = 10;
+            HitDamage(0);
+        }
+
+        void InPlay()
+        {
+            if (!WasBumped)
+                Input();
+
+            KeepInBorders();
+
+            if (Gun.Rotation.Z < 0)
+                Gun.Rotation.Z = 0;
+
+            if (Gun.Rotation.Z > 0.333f)
+                Gun.Rotation.Z = 0.333f;
+
+            Services.Camera.Position.Z = 600 + Position.Z;
+            Services.Camera.Target = Position;
+
+            WasBumped = false;
+        }
+
+        void GameOver()
+        {
+            RefGameLogic.RefUI.GameOver();
+            Position.Z = RefGameLogic.RefGround.TheBorder - 30;
+            Services.Camera.Position.Z = 600 + Position.Z;
+            Services.Camera.Target = Position;
+            RefGameLogic.GameOver();
+            Active = false;
         }
 
         void KeepInBorders()

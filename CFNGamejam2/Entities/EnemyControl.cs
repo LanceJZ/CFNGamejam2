@@ -45,11 +45,6 @@ namespace CFNGamejam2.Entities
 
         public void BeginRun()
         {
-            int border = RefGameLogic.RefGround.TheBorder;
-
-            for (int i = 0; i < 4; i++)
-                SpawnDuck(new Vector3(Services.RandomMinMax(-border, border), 200, border + 500));
-
             TheGateway.Position.Z = -1000;
             TheGateway.Position.Y = 20;
 
@@ -64,17 +59,43 @@ namespace CFNGamejam2.Entities
                 SpawnWall(pos);
             }
 
-            for (int i = 0; i < 4; i++)
-            {
-                SpawnBattery(new Vector3(-200, 20, -800 + (i * 400)));
-                SpawnBattery(new Vector3(200, 20, -800 + (i * 400)));
-            }
+            NewGame();
+            GameOver();
         }
 
         public override void Update(GameTime gameTime)
         {
 
             base.Update(gameTime);
+        }
+
+        public void GameOver()
+        {
+
+        }
+
+        public void NewGame()
+        {
+            foreach (Duck duck in TheDucks)
+            {
+                duck.Active = false;
+            }
+
+            int border = RefGameLogic.RefGround.TheBorder;
+
+            for (int i = 0; i < 4; i++)
+                SpawnDuck(new Vector3(Services.RandomMinMax(-border, border), 200, border + 500));
+
+            foreach(MissileBattery battery in TheBatterys)
+            {
+                battery.Active = false;
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                SpawnBattery(new Vector3(-200, 20, -700 + (i * 500)));
+                SpawnBattery(new Vector3(200, 20, -700 + (i * 500)));
+            }
         }
 
         void SpawnWall(Vector3 position)

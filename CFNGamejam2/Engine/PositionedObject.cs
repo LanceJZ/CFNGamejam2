@@ -15,6 +15,7 @@ namespace Engine
 		// Doing these as fields is almost twice as fast as if they were properties.
 		// Also, sense XYZ are fields they do not get data binned as a property.
 		public PositionedObject ParentPO;
+		public List<PositionedObject> ChildrenPOs;
 		public Vector3 Position = Vector3.Zero;
 		public Vector3 Acceleration = Vector3.Zero;
 		public Vector3 Velocity = Vector3.Zero;
@@ -78,7 +79,24 @@ namespace Engine
 		/// <summary>
 		/// Enabled causes the class to update. If base of Sprite, enables sprite to be drawn.
 		/// </summary>
-		public bool Active { get => Enabled; set => Enabled = value; }
+		public bool Active
+		{
+			get => Enabled;
+
+			set
+			{
+				Enabled = value;
+
+				if (m_Parent)
+				{
+                    foreach (PositionedObject child in ChildrenPOs)
+                    {
+                        if (child.ActiveDependent)
+                            child.Active = value;
+                    }
+				}
+			}
+		}
 		/// <summary>
 		/// Enabled the active bool will mirror that of the parent.
 		/// </summary>
@@ -108,6 +126,7 @@ namespace Engine
 		/// <param name="game">The game class</param>
 		public PositionedObject(Game game) : base(game)
 		{
+            ChildrenPOs = new List<PositionedObject>();
 			game.Components.Add(this);
 		}
 		#endregion
@@ -154,9 +173,6 @@ namespace Engine
 					WorldRotation = Rotation + ParentPO.WorldRotation;
 				}
 
-				if (ActiveDependent)
-					Active = ParentPO.Active;
-
 				base.Update(gameTime);
 			}
 			else
@@ -178,7 +194,8 @@ namespace Engine
 			Child = true;
 			ParentPO = Parent;
 			ParentPO.Parent = true;
-		}
+            ParentPO.ChildrenPOs.Add(this);
+        }
 
 		public void Remove()
 		{

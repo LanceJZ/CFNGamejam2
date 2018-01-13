@@ -11,12 +11,13 @@ namespace CFNGamejam2.Entities
 {
     public class Bomb : AModel
     {
+        GameLogic RefGameLogic;
         Explode Explosion;
         Timer LifeTimer;
 
-
-        public Bomb(Game game) : base(game)
+        public Bomb(Game game, GameLogic gameLogic) : base(game)
         {
+            RefGameLogic = gameLogic;
             Explosion = new Explode(game);
             LifeTimer = new Timer(game, 5);
 
@@ -57,6 +58,8 @@ namespace CFNGamejam2.Entities
                 RotationVelocity.Z = 0;
             }
 
+            CheckCollusion();
+
             base.Update(gameTime);
         }
 
@@ -75,6 +78,15 @@ namespace CFNGamejam2.Entities
             Velocity.Y = 0;
             Acceleration.Y = 0;
             Explosion.Spawn(Position, Radius * 0.5f, 100);
+        }
+
+        void CheckCollusion()
+        {
+            if (SphereIntersect(RefGameLogic.RefPlayer))
+            {
+                HitTarget();
+                RefGameLogic.RefPlayer.HitDamage(1);
+            }
         }
     }
 }

@@ -7,13 +7,13 @@ using System.Collections.Generic;
 using System;
 using Engine;
 
-namespace CFNGamejam2.Entities
+namespace Engine
 {
-    public class ExplodeParticle : AModel
+    public class SmokeParticle : AModel
     {
         Timer LifeTimer;
 
-        public ExplodeParticle(Game game) : base(game)
+        public SmokeParticle(Game game) : base(game)
         {
             LifeTimer = new Timer(game);
         }
@@ -21,6 +21,8 @@ namespace CFNGamejam2.Entities
         public override void Initialize()
         {
             base.Initialize();
+
+
         }
 
         public override void LoadContent()
@@ -30,8 +32,9 @@ namespace CFNGamejam2.Entities
 
         public override void BeginRun()
         {
-
             base.BeginRun();
+
+
         }
 
         public override void Update(GameTime gameTime)
@@ -44,10 +47,14 @@ namespace CFNGamejam2.Entities
 
         public override void Spawn(Vector3 position)
         {
-            Velocity = RandomVelocity(100);
             base.Spawn(position);
+
             Scale = Services.RandomMinMax(1, 2);
-            LifeTimer.Reset(Services.RandomMinMax(0.1f, 1));
+            LifeTimer.Reset(Services.RandomMinMax(3.1f, 15.5f));
+            Velocity.Y = Services.RandomMinMax(1.1f, 4.5f);
+            float drift = 1.5f;
+            Velocity.X = Services.RandomMinMax(-drift, drift);
+            Velocity.Z = Services.RandomMinMax(-drift, drift);
         }
     }
 }

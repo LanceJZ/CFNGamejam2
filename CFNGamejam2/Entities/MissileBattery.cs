@@ -13,8 +13,9 @@ namespace CFNGamejam2.Entities
     public class MissileBattery : AModel
     {
         GameLogic RefGameLogic;
-        AModel Turret;
         List<Missile> Missiles;
+        Smoke TheSmoke;
+        AModel Turret;
         Timer ChangeTargetTimer;
         Timer FireTimer;
 
@@ -23,8 +24,9 @@ namespace CFNGamejam2.Entities
         public MissileBattery(Game game, GameLogic gameLogic) : base(game)
         {
             RefGameLogic = gameLogic;
-            Turret = new AModel(game);
             Missiles = new List<Missile>();
+            TheSmoke = new Smoke(game);
+            Turret = new AModel(game);
             ChangeTargetTimer = new Timer(game);
             FireTimer = new Timer(game, 2);
         }
@@ -46,34 +48,38 @@ namespace CFNGamejam2.Entities
             base.BeginRun();
 
             Turret.Position.Y = 20 + 19;
-            Turret.AddAsChildOf(this, true, false);
+            Turret.AddAsChildOf(this, false, false);
             Turret.MatrixUpdate();
             Rotation.Y = -MathHelper.PiOver2;
         }
 
         public override void Update(GameTime gameTime)
         {
-            if (AimedAtTargetY(CurrentTarget, Turret.WorldRotation.Y, 0.05f))
+            if (Turret.Active)
             {
-                Turret.RotationVelocity.Y = 0;
-                if (FireTimer.Elapsed)
+                if (AimedAtTargetY(CurrentTarget, Turret.WorldRotation.Y, 0.05f))
                 {
-                    if (Vector3.Distance(Position, CurrentTarget) < 500)
-                        FireMissiles();
+                    Turret.RotationVelocity.Y = 0;
+                    if (FireTimer.Elapsed)
+                    {
+                        if (Vector3.Distance(Position, CurrentTarget) < 500)
+                            FireMissiles();
+                    }
+                }
+                else
+                {
+                    Turret.RotationVelocity.Y = AimAtTargetY(CurrentTarget,
+                        Turret.WorldRotation.Y, MathHelper.PiOver4 * 0.25f);
+                }
+
+                if (ChangeTargetTimer.Elapsed)
+                {
+                    ChangeTarget();
+                    ChangeTargetTimer.Reset(Services.RandomMinMax(1.25f, 3.25f));
                 }
             }
-            else
-            {
-                Turret.RotationVelocity.Y = AimAtTargetY(CurrentTarget,
-                    Turret.WorldRotation.Y, MathHelper.PiOver4 * 0.25f);
-            }
 
-            if (ChangeTargetTimer.Elapsed)
-            {
-                ChangeTarget();
-                ChangeTargetTimer.Reset(Services.RandomMinMax(1.25f, 3.25f));
-            }
-
+            CheckCollusion();
 
             base.Update(gameTime);
         }
@@ -83,6 +89,25 @@ namespace CFNGamejam2.Entities
             base.Spawn(position);
 
             Turret.MatrixUpdate();
+        }
+
+        void CheckCollusion()
+        {
+            foreach (TankShot shot in RefGameLogic.RefPlayer.ShotsRef)
+            {
+                if (shot.Active)
+                {
+                    if (SphereIntersect(shot))
+                    {
+                        Vector3 pos = Position;
+                        pos.Y += 20;
+                        TheSmoke.Spawn(pos, 10, 50);
+                        shot.Active = false;
+                        Turret.Active = false;
+                        break;
+                    }
+                }
+            }
         }
 
         void FireMissiles()

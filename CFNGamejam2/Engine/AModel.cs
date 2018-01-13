@@ -15,7 +15,7 @@ namespace Engine
     {
         public Vector3 DefuseColor = new Vector3(1,1,1);
         Texture2D XNATexture;
-        Matrix[] ModelTransforms;
+        //Matrix[] ModelTransforms;
         Matrix BaseWorld;
         public Vector3 ModelScale = new Vector3(1);
         public Vector3 ModelScaleVelocity = Vector3.Zero;
@@ -106,9 +106,9 @@ namespace Engine
             }
         }
 
-        public void Draw()
+        public virtual void Draw()
         {
-            if (Visable & Active)
+            if (Visable)
             {
                 if (XNAModel == null)
                     return;
@@ -129,7 +129,7 @@ namespace Engine
                         effect.World = BaseWorld;
 
                         //if (XNATexture != null)
-                            //effect.Texture = XNATexture;// ?? effect.Texture; //Replace texture if XNATexture is not null.
+                        //effect.Texture = XNATexture;// ?? effect.Texture; //Replace texture if XNATexture is not null.
 
                         Services.Camera.Draw(effect);
                     }
@@ -275,8 +275,8 @@ namespace Engine
 
         public void Destroy()
         {
-            if (ModelTransforms != null)
-                ModelTransforms.Initialize();
+            //if (ModelTransforms != null)
+            //    ModelTransforms.Initialize();
 
             BaseWorld = Matrix.Identity;
             XNAModel = null;
