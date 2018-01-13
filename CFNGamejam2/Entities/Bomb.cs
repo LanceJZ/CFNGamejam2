@@ -15,6 +15,8 @@ namespace CFNGamejam2.Entities
         Explode Explosion;
         Timer LifeTimer;
 
+        SoundEffect ExplodeSound;
+
         public Bomb(Game game, GameLogic gameLogic) : base(game)
         {
             RefGameLogic = gameLogic;
@@ -32,6 +34,7 @@ namespace CFNGamejam2.Entities
         public override void LoadContent()
         {
             LoadModel("Bomb");
+            ExplodeSound = LoadSoundEffect("BombExplode");
         }
 
         public override void BeginRun()
@@ -78,14 +81,18 @@ namespace CFNGamejam2.Entities
             Velocity.Y = 0;
             Acceleration.Y = 0;
             Explosion.Spawn(Position, Radius * 0.5f, 100);
+            ExplodeSound.Play();
         }
 
         void CheckCollusion()
         {
-            if (SphereIntersect(RefGameLogic.RefPlayer))
+            if (RefGameLogic.RefPlayer.Active)
             {
-                HitTarget();
-                RefGameLogic.RefPlayer.HitDamage(1);
+                if (SphereIntersect(RefGameLogic.RefPlayer))
+                {
+                    HitTarget();
+                    RefGameLogic.RefPlayer.HitDamage(1);
+                }
             }
         }
     }

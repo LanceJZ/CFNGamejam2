@@ -13,11 +13,13 @@ namespace CFNGamejam2.Entities
     {
         Explode Explosion;
         Timer LifeTimer;
+        SoundEffect HitSound;
 
-        public TankShot(Game game) : base(game)
+        public TankShot(Game game, SoundEffect hitSound) : base(game)
         {
             LifeTimer = new Timer(game);
             Explosion = new Explode(game);
+            HitSound = hitSound;
         }
 
         public override void Initialize()
@@ -62,6 +64,7 @@ namespace CFNGamejam2.Entities
         {
             Active = false;
             Explosion.Spawn(Position, Radius * 0.25f, 30);
+            HitSound.Play();
         }
 
 

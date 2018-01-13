@@ -13,8 +13,10 @@ namespace Engine
     {
         List<ExplodeParticle> Particles;
         XnaModel Cube;
+        Vector3 TheColor;
 
         public bool Active { get => Enabled; }
+        public Vector3 DefuseColor { set => TheColor = value; }
 
         public Explode(Game game) : base(game)
         {
@@ -25,7 +27,7 @@ namespace Engine
 
         public override void Initialize()
         {
-
+            TheColor = new Vector3(1);
             base.Initialize();
             LoadContent();
             BeginRun();
@@ -73,6 +75,7 @@ namespace Engine
                 {
                     Particles.Add(new ExplodeParticle(Game));
                     Particles.Last().SetModel(Cube);
+                    Particles.Last().DefuseColor = TheColor;
                 }
             }
 

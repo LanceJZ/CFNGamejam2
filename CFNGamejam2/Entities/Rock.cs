@@ -54,6 +54,31 @@ namespace CFNGamejam2.Entities
             {
                 RefGameLogic.RefPlayer.Bumped(Position);
             }
+
+            foreach(TankShot shot in RefGameLogic.RefPlayer.ShotsRef)
+            {
+                if (shot.Active)
+                {
+                    if (SphereIntersect(shot))
+                    {
+                        shot.HitTarget();
+                    }
+                }
+            }
+
+            foreach(MissileBattery battery in RefGameLogic.RefEnemy.BatterysRef)
+            {
+                foreach(Missile missile in battery.MissilesRef)
+                {
+                    if (missile.Active)
+                    {
+                        if (SphereIntersect(missile))
+                        {
+                            missile.HitTarget();
+                        }
+                    }
+                }
+            }
         }
     }
 }

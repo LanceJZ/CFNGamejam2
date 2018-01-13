@@ -1134,3 +1134,63 @@
 /processorParam:TextureFormat=Compressed
 /build:Models/Water.obj
 
+#begin Sounds/BombExplode.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/BombExplode.wav
+
+#begin Sounds/DropBomb.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/DropBomb.wav
+
+#begin Sounds/Duck.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Duck.wav
+
+#begin Sounds/GateExplode.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/GateExplode.wav
+
+#begin Sounds/MissileFire.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/MissileFire.wav
+
+#begin Sounds/MissileHit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/MissileHit.wav
+
+#begin Sounds/TankIdle.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/TankIdle.wav
+
+#begin Sounds/TankMove.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/TankMove.wav
+
+#begin Sounds/TankShot.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/TankShot.wav
+
+#begin Sounds/TankShotHit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/TankShotHit.wav
+

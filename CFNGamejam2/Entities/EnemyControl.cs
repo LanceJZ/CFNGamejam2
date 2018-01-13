@@ -19,6 +19,8 @@ namespace CFNGamejam2.Entities
         XnaModel WallPiece;
         Gateway TheGateway;
 
+        public List<MissileBattery> BatterysRef { get => TheBatterys; }
+
         public EnemyControl(Game game, GameLogic gameLogic) : base(game)
         {
             RefGameLogic = gameLogic;
@@ -93,9 +95,11 @@ namespace CFNGamejam2.Entities
 
             for (int i = 0; i < 4; i++)
             {
-                SpawnBattery(new Vector3(-200, 20, -700 + (i * 500)));
-                SpawnBattery(new Vector3(200, 20, -700 + (i * 500)));
+                SpawnBattery(new Vector3(-150, 20, -700 + (i * 500)));
+                SpawnBattery(new Vector3(150, 20, -700 + (i * 500)));
             }
+
+            TheGateway.Spawn(TheGateway.Position);
         }
 
         void SpawnWall(Vector3 position)

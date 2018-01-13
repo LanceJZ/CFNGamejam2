@@ -20,7 +20,7 @@ namespace Engine
         public Vector3 ModelScale = new Vector3(1);
         public Vector3 ModelScaleVelocity = Vector3.Zero;
         public Vector3 ModelScaleAcceleration = Vector3.Zero;
-        bool m_AnimatedScale = true;
+        bool m_AnimatedScale;
 
         public XnaModel XNAModel { get; private set; }
         public Matrix TheWoldMatrix { get => BaseWorld; }
@@ -215,8 +215,26 @@ namespace Engine
             float radius = ((Sphere.Radius * Scale) * 0.8f) +
                 ((target.Sphere.Radius * target.Scale) * 0.8f);
 
-            if (Vector3.Distance(Position, target.Position) < radius)
-                return true;
+            if (Child && !target.Child)
+            {
+                if (Vector3.Distance(WorldPosition, target.Position) < radius)
+                    return true;
+            }
+            else if (target.Child && !Child)
+            {
+                if (Vector3.Distance(Position, target.WorldPosition) < radius)
+                    return true;
+            }
+            else if (Child && target.Child)
+            {
+                if (Vector3.Distance(WorldPosition, target.WorldPosition) < radius)
+                    return true;
+            }
+            else
+            {
+                if (Vector3.Distance(Position, target.Position) < radius)
+                    return true;
+            }
 
             return false;
         }

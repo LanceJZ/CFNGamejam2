@@ -26,6 +26,10 @@ namespace CFNGamejam2.Entities
         Timer GlideTimer;
         Timer DropBombTimer;
         Timer ChangeHeadingTimer;
+        Timer QuackTimer;
+
+        SoundEffect QuackSound;
+        SoundEffect DropBombSound;
 
         Mode CurrentMode;
 
@@ -46,6 +50,7 @@ namespace CFNGamejam2.Entities
             GlideTimer = new Timer(game, 5);
             DropBombTimer = new Timer(game, 2);
             ChangeHeadingTimer = new Timer(game);
+            QuackTimer = new Timer(game);
         }
 
         public override void Initialize()
@@ -59,6 +64,9 @@ namespace CFNGamejam2.Entities
             LoadModel("DuckBody");
             Wings[0].LoadModel("DuckLWing");
             Wings[1].LoadModel("DuckRWing");
+
+            QuackSound = LoadSoundEffect("Duck");
+            DropBombSound = LoadSoundEffect("DropBomb");
         }
 
         public override void BeginRun()
@@ -101,6 +109,16 @@ namespace CFNGamejam2.Entities
                     if (GlideTimer.Elapsed && Position.Y < 60)
                     {
                         ChangeToFlap();
+                        return;
+                    }
+
+                    if (RefGameLogic.CurrentMode == GameState.InPlay)
+                    {
+                        if (QuackTimer.Elapsed)
+                        {
+                            QuackTimer.Reset(Services.RandomMinMax(6.5f, 15.1f));
+                            QuackSound.Play(0.25f, 1, 1);
+                        }
                     }
 
                     break;
@@ -128,15 +146,27 @@ namespace CFNGamejam2.Entities
             base.Update(gameTime);
         }
 
+        public override void Spawn(Vector3 position)
+        {
+            base.Spawn(position);
+
+            QuackTimer.Reset(Services.RandomMinMax(3.5f, 15.1f));
+        }
+
         void CheckHit()
         {
             foreach(TankShot shot in RefGameLogic.RefPlayer.ShotsRef)
             {
-                if (SphereIntersect(shot))
+                if (shot.Active)
                 {
-                    Active = false;
-                    Explosion.Spawn(Position, 3, 20);
-                    shot.Active = false;
+                    if (SphereIntersect(shot))
+                    {
+                        Active = false;
+                        Explosion.DefuseColor = new Vector3(0.713f, 0.149f, 0.286f);
+                        Explosion.Spawn(Position, 5, 30);
+                        shot.HitTarget();
+                        RefGameLogic.AddToScore(100);
+                    }
                 }
             }
         }
@@ -223,6 +253,7 @@ namespace CFNGamejam2.Entities
             }
 
             Bombs[thisOne].Spawn(Position, Rotation, Velocity / 4);
+            DropBombSound.Play(0.5f, 1, 1);
         }
 
         void FlapWings()

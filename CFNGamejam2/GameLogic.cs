@@ -76,9 +76,20 @@ namespace CFNGamejam2
             base.Update(gameTime);
         }
 
+        public void AddToScore(int points)
+        {
+            Score += points;
+            TheUI.ScoreUpdate(Score);
+        }
+
         public void SwitchToMainMenu()
         {
             GameMode = GameState.MainMenu;
+        }
+
+        public void NewWave()
+        {
+
         }
 
         public void GameOver()
@@ -89,6 +100,7 @@ namespace CFNGamejam2
         public void NewGame()
         {
             Score = 0;
+            AddToScore(0);
             GameMode = GameState.InPlay;
             RefUI.NewGame();
             RefEnemy.NewGame();

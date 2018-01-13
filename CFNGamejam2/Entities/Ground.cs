@@ -165,7 +165,7 @@ namespace CFNGamejam2.Entities
         public void ClearPath(Vector3[] path)
         {
             bool working = true;
-            float radius = 200;
+            float radius = 150;
 
             while(working)
             {

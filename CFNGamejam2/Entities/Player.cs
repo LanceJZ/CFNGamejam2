@@ -7,6 +7,12 @@ using System.Collections.Generic;
 using System;
 using Engine;
 
+enum SoundMode
+{
+    Idle,
+    Move
+}
+
 namespace CFNGamejam2.Entities
 {
     public class Player : AModel
@@ -20,14 +26,23 @@ namespace CFNGamejam2.Entities
         AModel[] Treads = new AModel[2];
 
         Timer PerShotTimer;
+        Timer IdleSoundTimer;
+        Timer MoveSoundTimer;
+
+        SoundEffect ShootSound;
+        SoundEffect IdleSound;
+        SoundEffect MoveSound;
+        SoundEffect ShotHitSound;
 
         KeyboardState LastKeyState;
+        SoundMode EngineSound;
 
         int Speed = 50;
-        int Health = 10;
+        int Health;
         bool WasBumped;
 
         public List<TankShot> ShotsRef { get => Shots; }
+        public AModel GunRef { get => Gun; }
 
         public Player(Game game, GameLogic gameLogic) : base(game)
         {
@@ -44,6 +59,8 @@ namespace CFNGamejam2.Entities
             }
 
             PerShotTimer = new Timer(game, 1);
+            IdleSoundTimer = new Timer(game);
+            MoveSoundTimer = new Timer(game);
         }
 
         public override void Initialize()
@@ -58,11 +75,17 @@ namespace CFNGamejam2.Entities
             Turret.LoadModel("TankTurret");
             Gun.LoadModel("TankGun");
             HealthBar.LoadModel("Core/Cube");
+            HealthBack.LoadModel("Core/Cube");
 
             for (int i = 0; i < 2; i++)
             {
                 Treads[i].LoadModel("TankTreads");
             }
+
+            ShootSound = LoadSoundEffect("TankShot");
+            IdleSound = LoadSoundEffect("TankIdle");
+            MoveSound = LoadSoundEffect("TankMove");
+            ShotHitSound = LoadSoundEffect("TankShotHit");
         }
 
         public override void BeginRun()
@@ -70,14 +93,21 @@ namespace CFNGamejam2.Entities
             base.BeginRun();
 
             Turret.Position.Y = 11.5f;
+            Turret.AddAsChildOf(this, true, false);
             Gun.Position.X = 13.5f;
             Gun.Position.Y = -2.25f;
-            HealthBar.DefuseColor = new Vector3(0, 200, 0);
+            Gun.AddAsChildOf(Turret, true, false);
+
+            HealthBar.DefuseColor = new Vector3(0, 2, 0);
+            HealthBar.ModelScale.X = 2;
+            HealthBar.ModelScale.Z = 2;
+            HealthBar.AddAsChildOf(this, true, false);
             HealthBack.Position.Y = 24;
-            //HealthBack.Position.Z = -1; //If facing camera;
-            HealthBack.ModelScale.Y = 10;
-            HealthBack.ModelScale.Z = 0.5f;
-            HealthBack.ModelScale.X = 0.5f;
+            HealthBack.ModelScale.Y = 5;
+            HealthBack.ModelScale.Z = 1;
+            HealthBack.ModelScale.X = 1;
+            HealthBack.DefuseColor = new Vector3(0.1f, 0.1f, 0.1f);
+            HealthBack.AddAsChildOf(this, true, false);
 
             for (int i = 0; i < 2; i++)
             {
@@ -86,10 +116,8 @@ namespace CFNGamejam2.Entities
                 Treads[i].AddAsChildOf(this, true, false);
             }
 
-            Turret.AddAsChildOf(this, true, false);
-            Gun.AddAsChildOf(Turret, true, false);
-            HealthBar.AddAsChildOf(this, true, false);
-            HealthBack.AddAsChildOf(this, true, false);
+            IdleSoundTimer.Amount = (float)IdleSound.Duration.TotalSeconds;
+            MoveSoundTimer.Amount = (float)MoveSound.Duration.TotalSeconds;
 
             GameOver();
         }
@@ -115,7 +143,7 @@ namespace CFNGamejam2.Entities
         public void HitDamage(int damage)
         {
             Health -= damage;
-            HealthBar.ModelScale.Y = Health / 2;
+            HealthBar.ModelScale.Y = (Health / 2f);
             HealthBar.Position.Y = 19.5f + HealthBar.ModelScale.Y;
 
             if (Health <= 0)
@@ -158,6 +186,7 @@ namespace CFNGamejam2.Entities
         {
             RefGameLogic.RefUI.GameOver();
             Position.Z = RefGameLogic.RefGround.TheBorder - 30;
+            Position.X = 0;
             Services.Camera.Position.Z = 600 + Position.Z;
             Services.Camera.Target = Position;
             RefGameLogic.GameOver();
@@ -200,6 +229,23 @@ namespace CFNGamejam2.Entities
             else
                 StopMovement();
 
+            if (theKeyboard.IsKeyDown(Keys.D))
+                RotateCC();
+            else if (theKeyboard.IsKeyDown(Keys.A))
+                RotateCW();
+            else
+                StopRotation();
+
+            switch (EngineSound)
+            {
+                case SoundMode.Idle:
+                    PlayIdleSound();
+                    break;
+                case SoundMode.Move:
+                    PlayMoveSound();
+                    break;
+            }
+
             if (theKeyboard.IsKeyDown(Keys.Left))
                 RotateTurretCW();
             else if (theKeyboard.IsKeyDown(Keys.Right))
@@ -213,13 +259,6 @@ namespace CFNGamejam2.Entities
                 PointGunDown();
             else
                 StopGunRotation();
-
-            if (theKeyboard.IsKeyDown(Keys.D))
-                RotateCC();
-            else if (theKeyboard.IsKeyDown(Keys.A))
-                RotateCW();
-            else
-                StopRotation();
 
             if (!LastKeyState.IsKeyDown(Keys.Space) && theKeyboard.IsKeyDown(Keys.Space))
             {
@@ -235,6 +274,7 @@ namespace CFNGamejam2.Entities
 
         void FireShot()
         {
+            ShootSound.Play();
             bool makeNew = true;
             int thisOne = 0;
 
@@ -252,34 +292,56 @@ namespace CFNGamejam2.Entities
 
             if (makeNew)
             {
-                Shots.Add(new TankShot(Game));
+                Shots.Add(new TankShot(Game, ShotHitSound));
                 thisOne = Shots.Count - 1;
             }
 
             Vector3 vel = VelocityFromAngle(new Vector2(Turret.WorldRotation.Y,
                 Gun.Rotation.Z), 250);
-            Shots[Shots.Count - 1].Spawn(Gun.TheWoldMatrix.Translation + (vel * 0.2f),
+            Shots[thisOne].Spawn(Gun.TheWoldMatrix.Translation + (vel * 0.2f),
                 Gun.Rotation, vel);
+        }
+
+        void PlayMoveSound()
+        {
+            if (MoveSoundTimer.Elapsed)
+            {
+                MoveSoundTimer.Reset();
+                MoveSound.Play();
+            }
+        }
+
+        void PlayIdleSound()
+        {
+            if (IdleSoundTimer.Elapsed)
+            {
+                IdleSoundTimer.Reset();
+                IdleSound.Play();
+            }
         }
 
         void MoveForward()
         {
             Velocity = VelocityFromAngleY(Rotation.Y, Speed);
+            EngineSound = SoundMode.Move;
         }
 
         void MoveBackward()
         {
             Velocity = VelocityFromAngleY(Rotation.Y, -Speed);
+            EngineSound = SoundMode.Move;
         }
 
         void RotateCW()
         {
             RotationVelocity.Y = 0.5f;
+            EngineSound = SoundMode.Move;
         }
 
         void RotateCC()
         {
             RotationVelocity.Y = -0.5f;
+            EngineSound = SoundMode.Move;
         }
 
         void StopRotation()
@@ -290,6 +352,7 @@ namespace CFNGamejam2.Entities
         void StopMovement()
         {
             Velocity = Vector3.Zero;
+            EngineSound = SoundMode.Idle;
         }
 
         void RotateTurretCW()

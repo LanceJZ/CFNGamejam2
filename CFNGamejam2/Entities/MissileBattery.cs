@@ -15,11 +15,18 @@ namespace CFNGamejam2.Entities
         GameLogic RefGameLogic;
         List<Missile> Missiles;
         Smoke TheSmoke;
+        AModel HealthBar;
+        AModel HealthBack;
         AModel Turret;
         Timer ChangeTargetTimer;
         Timer FireTimer;
 
+        SoundEffect FireSound;
+
         Vector3 CurrentTarget = Vector3.Zero;
+        int Health;
+
+        public List<Missile> MissilesRef { get => Missiles; }
 
         public MissileBattery(Game game, GameLogic gameLogic) : base(game)
         {
@@ -29,6 +36,8 @@ namespace CFNGamejam2.Entities
             Turret = new AModel(game);
             ChangeTargetTimer = new Timer(game);
             FireTimer = new Timer(game, 2);
+            HealthBar = new AModel(game);
+            HealthBack = new AModel(game);
         }
 
         public override void Initialize()
@@ -41,6 +50,9 @@ namespace CFNGamejam2.Entities
         {
             LoadModel("MissileBatteryBase");
             Turret.LoadModel("MissileBatteryTurret");
+            HealthBar.LoadModel("Core/Cube");
+            HealthBack.LoadModel("Core/Cube");
+            FireSound = LoadSoundEffect("MissileFire");
         }
 
         public override void BeginRun()
@@ -49,14 +61,28 @@ namespace CFNGamejam2.Entities
 
             Turret.Position.Y = 20 + 19;
             Turret.AddAsChildOf(this, false, false);
-            Turret.MatrixUpdate();
-            Rotation.Y = -MathHelper.PiOver2;
+
+            HealthBar.DefuseColor = new Vector3(0, 2, 0);
+            HealthBar.ModelScale.X = 2;
+            HealthBar.ModelScale.Z = 2;
+            HealthBar.AddAsChildOf(this, true, false);
+            HealthBack.Position.Y = 64;
+            HealthBack.ModelScale.Y = 5;
+            HealthBack.ModelScale.Z = 1;
+            HealthBack.ModelScale.X = 1;
+            HealthBack.DefuseColor = new Vector3(0.1f, 0.1f, 0.1f);
+            HealthBack.AddAsChildOf(this, true, false);
         }
 
         public override void Update(GameTime gameTime)
         {
             if (Turret.Active)
             {
+                if (!RefGameLogic.RefPlayer.Active)
+                {
+                    CurrentTarget = new Vector3(0, 0, 2000);
+                }
+
                 if (AimedAtTargetY(CurrentTarget, Turret.WorldRotation.Y, 0.05f))
                 {
                     Turret.RotationVelocity.Y = 0;
@@ -87,8 +113,14 @@ namespace CFNGamejam2.Entities
         public override void Spawn(Vector3 position)
         {
             base.Spawn(position);
-
-            Turret.MatrixUpdate();
+            Rotation.Y = -MathHelper.PiOver2;
+            Turret.Active = true;
+            TheSmoke.Kill();
+            Health = 10;
+            HealthBar.Active = true;
+            HealthBack.Active = true;
+            HealthBar.ModelScale.Y = Health / 2;
+            HealthBar.Position.Y = 59.5f + HealthBar.ModelScale.Y;
         }
 
         void CheckCollusion()
@@ -99,14 +131,31 @@ namespace CFNGamejam2.Entities
                 {
                     if (SphereIntersect(shot))
                     {
-                        Vector3 pos = Position;
-                        pos.Y += 20;
-                        TheSmoke.Spawn(pos, 10, 50);
-                        shot.Active = false;
-                        Turret.Active = false;
+                        Health -= 1;
+                        HealthBar.ModelScale.Y = (Health / 2f);
+                        HealthBar.Position.Y = 59.5f + HealthBar.ModelScale.Y;
+                        shot.HitTarget();
+
+                        if (Health <= 0)
+                        {
+                            Vector3 pos = Position;
+                            pos.Y += 20;
+                            TheSmoke.Spawn(pos, 10, 50);
+                            Turret.Active = false;
+                            RefGameLogic.AddToScore(25);
+                            HealthBar.Active = false;
+                            HealthBack.Active = false;
+                        }
+
                         break;
                     }
                 }
+            }
+
+            if (SphereIntersect(RefGameLogic.RefPlayer) ||
+                SphereIntersect(RefGameLogic.RefPlayer.GunRef))
+            {
+                RefGameLogic.RefPlayer.Bumped(Position);
             }
         }
 
@@ -145,6 +194,7 @@ namespace CFNGamejam2.Entities
                 }
 
                 Missiles[thisOne[i]].Spawn(launchTubes[i], Turret.WorldRotation, target, CurrentTarget);
+                FireSound.Play();
             }
         }
 

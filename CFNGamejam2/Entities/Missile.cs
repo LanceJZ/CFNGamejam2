@@ -15,6 +15,8 @@ namespace CFNGamejam2.Entities
         Explode Explosion;
         Timer LifeTimer;
 
+        SoundEffect HitSound;
+
         Vector3 Target;
 
         public Missile(Game game, GameLogic gameLogic) : base(game)
@@ -33,6 +35,7 @@ namespace CFNGamejam2.Entities
         public override void LoadContent()
         {
             LoadModel("Missile");
+            HitSound = LoadSoundEffect("MissileHit");
         }
 
         public override void BeginRun()
@@ -53,7 +56,7 @@ namespace CFNGamejam2.Entities
                 HitTarget();
             }
 
-            Acceleration.Y = -VelocityFromAngleY(Rotation.Z, 45).X;
+            Acceleration.Y = -VelocityFromAngleY(Rotation.Z, 20).X;
 
             CheckCollusion();
 
@@ -73,14 +76,18 @@ namespace CFNGamejam2.Entities
         {
             Active = false;
             Explosion.Spawn(Position, Radius, 50);
+            HitSound.Play();
         }
 
         void CheckCollusion()
         {
-            if (SphereIntersect(RefGameLogic.RefPlayer))
+            if (RefGameLogic.RefPlayer.Active)
             {
-                HitTarget();
-                RefGameLogic.RefPlayer.HitDamage(1);
+                if (SphereIntersect(RefGameLogic.RefPlayer))
+                {
+                    HitTarget();
+                    RefGameLogic.RefPlayer.HitDamage(1);
+                }
             }
         }
     }
