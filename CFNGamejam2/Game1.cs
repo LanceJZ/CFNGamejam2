@@ -37,6 +37,8 @@ namespace CFNGamejam2
             GameServices.TheGame = this;
             IsFixedTimeStep = false;
             Content.RootDirectory = "Content";
+            // Positive Y is Up. Positive X is Right.
+            GameServices.Initialize(Graphics, this, new Vector3(0, 200, 600), false, 1, 10000);
 
             TheGame = new GameLogic(this);
             FPSTimer = new Timer(this, 1);
@@ -56,13 +58,12 @@ namespace CFNGamejam2
         /// </summary>
         protected override void Initialize()
         {
-            // Positive Y is Up. Positive X is Right.
-            GameServices.Initialize(Graphics, this, new Vector3(0, 200, 600), false, 1, 10000);
             // Setup lighting.
             GameServices.DefuseLight = new Vector3(0.6f, 0.5f, 0.7f);
             GameServices.LightDirection = new Vector3(-0.75f, -0.75f, -0.5f);
             GameServices.SpecularColor = new Vector3(0.1f, 0, 0.5f);
             GameServices.AmbientLightColor = new Vector3(0.25f, 0.25f, 0.25f); // Add some overall ambient light.
+            spriteBatch = new SpriteBatch(GraphicsDevice);
 
             base.Initialize();
         }
@@ -74,7 +75,6 @@ namespace CFNGamejam2
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
         }
@@ -90,8 +90,6 @@ namespace CFNGamejam2
 
         protected override void BeginRun()
         {
-            GameServices.BeginRun(); //This only happens once in a game.
-
             base.BeginRun();
         }
 

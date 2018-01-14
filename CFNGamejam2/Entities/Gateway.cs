@@ -32,6 +32,8 @@ namespace CFNGamejam2.Entities
                 Doors[i] = new AModel(game);
                 DoorExplosions[i] = new Explode(game);
             }
+
+            LoadContent();
         }
 
         public override void Initialize()
@@ -40,7 +42,7 @@ namespace CFNGamejam2.Entities
 
         }
 
-        public override void LoadContent()
+        public void LoadContent()
         {
             LoadModel("GateFrame");
             HealthBar.LoadModel("Core/Cube");
@@ -52,6 +54,8 @@ namespace CFNGamejam2.Entities
             }
 
             ExplodeSound = LoadSoundEffect("GateExplode");
+
+            BeginRun();
         }
 
         public override void BeginRun()
@@ -72,6 +76,7 @@ namespace CFNGamejam2.Entities
             for (int i = 0; i < 2; i++)
             {
                 Doors[i].AddAsChildOf(this, true, false);
+                DoorExplosions[i].DefuseColor = new Vector3(0.4f, 0.4f, 0.5f);
             }
 
             HealthBar.DefuseColor = new Vector3(0, 2, 0);
@@ -152,7 +157,7 @@ namespace CFNGamejam2.Entities
 
                         foreach(AModel door in Doors)
                         {
-                            DoorExplosions[i].Spawn(door.Position, 5, 100);
+                            DoorExplosions[i].Spawn(door.Position, 10, 100);
                             i++;
                         }
 

@@ -61,6 +61,7 @@ namespace CFNGamejam2.Entities
             PerShotTimer = new Timer(game, 1);
             IdleSoundTimer = new Timer(game);
             MoveSoundTimer = new Timer(game);
+            LoadContent();
         }
 
         public override void Initialize()
@@ -69,7 +70,7 @@ namespace CFNGamejam2.Entities
             base.Initialize();
         }
 
-        public override void LoadContent()
+        public void LoadContent()
         {
             LoadModel("TankBody");
             Turret.LoadModel("TankTurret");
@@ -86,6 +87,8 @@ namespace CFNGamejam2.Entities
             IdleSound = LoadSoundEffect("TankIdle");
             MoveSound = LoadSoundEffect("TankMove");
             ShotHitSound = LoadSoundEffect("TankShotHit");
+
+            BeginRun();
         }
 
         public override void BeginRun()
@@ -118,8 +121,6 @@ namespace CFNGamejam2.Entities
 
             IdleSoundTimer.Amount = (float)IdleSound.Duration.TotalSeconds;
             MoveSoundTimer.Amount = (float)MoveSound.Duration.TotalSeconds;
-
-            GameOver();
         }
 
         public override void Update(GameTime gameTime)
@@ -152,15 +153,30 @@ namespace CFNGamejam2.Entities
             }
         }
 
+        public void NewWave()
+        {
+            Gun.Rotation.Z = 0.1f;
+            Turret.Rotation.Y = 0;
+            Rotation.Y = MathHelper.PiOver2;
+            Position.Z = RefGameLogic.RefGround.TheBorder - 30;
+            Position.X = 0;
+        }
+
         public void NewGame()
         {
             Active = true;
-            Gun.Rotation.Z = 0.1f;
-            Turret.Rotation.Y = 0;
-            Position.Y = 0;
-            Rotation.Y = MathHelper.PiOver2;
             Health = 10;
             HitDamage(0);
+            NewWave();
+        }
+
+        public void GameOver()
+        {
+            RefGameLogic.RefUI.GameOver();
+            Services.Camera.Position.Z = 600 + RefGameLogic.RefGround.TheBorder - 30;
+            Services.Camera.Target = new Vector3(0, 0, RefGameLogic.RefGround.TheBorder - 30);
+            RefGameLogic.GameOver();
+            Active = false;
         }
 
         void InPlay()
@@ -169,6 +185,13 @@ namespace CFNGamejam2.Entities
                 Input();
 
             KeepInBorders();
+
+            if (Position.Z < -1178)
+            {
+                RefGameLogic.NewWave();
+                NewWave();
+                return;
+            }
 
             if (Gun.Rotation.Z < 0)
                 Gun.Rotation.Z = 0;
@@ -180,17 +203,6 @@ namespace CFNGamejam2.Entities
             Services.Camera.Target = Position;
 
             WasBumped = false;
-        }
-
-        void GameOver()
-        {
-            RefGameLogic.RefUI.GameOver();
-            Position.Z = RefGameLogic.RefGround.TheBorder - 30;
-            Position.X = 0;
-            Services.Camera.Position.Z = 600 + Position.Z;
-            Services.Camera.Target = Position;
-            RefGameLogic.GameOver();
-            Active = false;
         }
 
         void KeepInBorders()
@@ -292,8 +304,8 @@ namespace CFNGamejam2.Entities
 
             if (makeNew)
             {
+                thisOne = Shots.Count;
                 Shots.Add(new TankShot(Game, ShotHitSound));
-                thisOne = Shots.Count - 1;
             }
 
             Vector3 vel = VelocityFromAngle(new Vector2(Turret.WorldRotation.Y,
@@ -322,7 +334,7 @@ namespace CFNGamejam2.Entities
 
         void MoveForward()
         {
-            Velocity = VelocityFromAngleY(Rotation.Y, Speed);
+            Velocity = VelocityFromAngleY(Rotation.Y, Speed * 1.5f);
             EngineSound = SoundMode.Move;
         }
 

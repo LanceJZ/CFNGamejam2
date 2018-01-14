@@ -25,9 +25,9 @@ namespace Engine
 
         public override void Initialize()
         {
-            Services.AddLoadable(this);
-
             base.Initialize();
+            LoadContent();
+            BeginRun();
         }
 
         public void LoadContent()

@@ -16,6 +16,8 @@ namespace Engine
         public SmokeParticle(Game game) : base(game)
         {
             LifeTimer = new Timer(game);
+
+            LoadContent();
         }
 
         public override void Initialize()
@@ -25,9 +27,10 @@ namespace Engine
 
         }
 
-        public override void LoadContent()
+        public void LoadContent()
         {
 
+            BeginRun();
         }
 
         public override void BeginRun()

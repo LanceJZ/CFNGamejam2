@@ -32,8 +32,8 @@ namespace CFNGamejam2.Entities
         {
 
             base.Initialize();
-            Services.AddLoadable(this);
-            Services.AddBeginable(this);
+            LoadContent();
+            BeginRun();
         }
 
         public void LoadContent()

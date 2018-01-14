@@ -16,6 +16,8 @@ namespace CFNGamejam2.Entities
         public Wall(Game game, GameLogic gameLogic) : base(game)
         {
             RefGameLogic = gameLogic;
+
+            LoadContent();
         }
 
         public override void Initialize()
@@ -25,9 +27,10 @@ namespace CFNGamejam2.Entities
 
         }
 
-        public override void LoadContent()
+        public void LoadContent()
         {
 
+            BeginRun();
         }
 
         public override void BeginRun()

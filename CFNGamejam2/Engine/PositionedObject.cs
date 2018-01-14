@@ -89,11 +89,11 @@ namespace Engine
 
 				if (m_Parent)
 				{
-                    foreach (PositionedObject child in ChildrenPOs)
-                    {
-                        if (child.ActiveDependent)
-                            child.Active = value;
-                    }
+					foreach (PositionedObject child in ChildrenPOs)
+					{
+						if (child.ActiveDependent)
+							child.Active = value;
+					}
 				}
 			}
 		}
@@ -126,26 +126,24 @@ namespace Engine
 		/// <param name="game">The game class</param>
 		public PositionedObject(Game game) : base(game)
 		{
-            ChildrenPOs = new List<PositionedObject>();
-			game.Components.Add(this);
-		}
-		#endregion
-		#region Public Methods
-		public override void Initialize()
+			ChildrenPOs = new List<PositionedObject>();
+            Game.Components.Add(this);
+        }
+        #endregion
+        #region Public Methods
+        public override void Initialize()
 		{
-			base.Initialize();
-			BeginRun();
+            base.Initialize();
 		}
 
 		public virtual void BeginRun()
 		{
-
-		}
-		/// <summary>
-		/// Allows the game component to be updated.
-		/// </summary>
-		/// <param name="gameTime">Provides a snapshot of timing values.</param>
-		public override void Update(GameTime gameTime)
+        }
+        /// <summary>
+        /// Allows the game component to be updated.
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        public override void Update(GameTime gameTime)
 		{
 			if (Moveable)
 			{
@@ -194,8 +192,8 @@ namespace Engine
 			Child = true;
 			ParentPO = Parent;
 			ParentPO.Parent = true;
-            ParentPO.ChildrenPOs.Add(this);
-        }
+			ParentPO.ChildrenPOs.Add(this);
+		}
 
 		public void Remove()
 		{

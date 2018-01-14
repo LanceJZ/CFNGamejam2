@@ -18,6 +18,7 @@ namespace CFNGamejam2.Entities
         List<Wall> TheWall;
         XnaModel WallPiece;
         Gateway TheGateway;
+        int Wave;
 
         public List<MissileBattery> BatterysRef { get => TheBatterys; }
 
@@ -76,7 +77,7 @@ namespace CFNGamejam2.Entities
 
         }
 
-        public void NewGame()
+        public void NewWave()
         {
             foreach (Duck duck in TheDucks)
             {
@@ -85,21 +86,38 @@ namespace CFNGamejam2.Entities
 
             int border = RefGameLogic.RefGround.TheBorder;
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < (1 + Wave); i++)
                 SpawnDuck(new Vector3(Services.RandomMinMax(-border, border), 200, border + 500));
 
-            foreach(MissileBattery battery in TheBatterys)
+            foreach (MissileBattery battery in TheBatterys)
             {
                 battery.Active = false;
             }
 
-            for (int i = 0; i < 4; i++)
-            {
-                SpawnBattery(new Vector3(-150, 20, -700 + (i * 500)));
-                SpawnBattery(new Vector3(150, 20, -700 + (i * 500)));
-            }
-
             TheGateway.Spawn(TheGateway.Position);
+
+            PlaceBatteries();
+
+            Wave++;
+        }
+
+        public void NewGame()
+        {
+            Wave = 0;
+            NewWave();
+        }
+
+        void PlaceBatteries()
+        {
+            int rows = Wave + 1;
+
+            if (rows > 5) rows = 5;
+
+            for (int i = 0; i < rows; i++)
+            {
+                SpawnBattery(new Vector3(-150, 20, -700 + (i * 400)));
+                SpawnBattery(new Vector3(150, 20, -700 + (i * 400)));
+            }
         }
 
         void SpawnWall(Vector3 position)

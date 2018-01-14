@@ -23,6 +23,7 @@ namespace CFNGamejam2.Entities
             Explosion = new Explode(game);
             LifeTimer = new Timer(game, 5);
 
+            LoadContent();
         }
 
         public override void Initialize()
@@ -31,10 +32,12 @@ namespace CFNGamejam2.Entities
             base.Initialize();
         }
 
-        public override void LoadContent()
+        public void LoadContent()
         {
             LoadModel("Bomb");
             ExplodeSound = LoadSoundEffect("BombExplode");
+
+            BeginRun();
         }
 
         public override void BeginRun()

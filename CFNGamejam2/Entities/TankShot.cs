@@ -20,6 +20,8 @@ namespace CFNGamejam2.Entities
             LifeTimer = new Timer(game);
             Explosion = new Explode(game);
             HitSound = hitSound;
+
+            LoadContent();
         }
 
         public override void Initialize()
@@ -28,9 +30,11 @@ namespace CFNGamejam2.Entities
             base.Initialize();
         }
 
-        public override void LoadContent()
+        public void LoadContent()
         {
             LoadModel("Core/Cube");
+
+            BeginRun();
         }
 
         public override void BeginRun()
@@ -55,7 +59,7 @@ namespace CFNGamejam2.Entities
 
         public override void Spawn(Vector3 position, Vector3 rotation, Vector3 velocity)
         {
-            LifeTimer.Reset(3);
+            LifeTimer.Reset(1.75f);
             base.Spawn(position, rotation, velocity);
             Acceleration.Y = -30;
         }

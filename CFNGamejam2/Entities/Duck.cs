@@ -41,7 +41,7 @@ namespace CFNGamejam2.Entities
             RefGameLogic = gameLogic;
 
             for (int i = 0; i < 2; i++)
-               Wings[i] = new AModel(game);
+                Wings[i] = new AModel(Game);
 
             Bombs = new List<Bomb>();
             Explosion = new Explode(game);
@@ -51,6 +51,8 @@ namespace CFNGamejam2.Entities
             DropBombTimer = new Timer(game, 2);
             ChangeHeadingTimer = new Timer(game);
             QuackTimer = new Timer(game);
+
+            LoadContent();
         }
 
         public override void Initialize()
@@ -59,14 +61,17 @@ namespace CFNGamejam2.Entities
             base.Initialize();
         }
 
-        public override void LoadContent()
+        public void LoadContent()
         {
             LoadModel("DuckBody");
+
             Wings[0].LoadModel("DuckLWing");
             Wings[1].LoadModel("DuckRWing");
 
             QuackSound = LoadSoundEffect("Duck");
             DropBombSound = LoadSoundEffect("DropBomb");
+
+            BeginRun();
         }
 
         public override void BeginRun()
@@ -248,8 +253,8 @@ namespace CFNGamejam2.Entities
 
             if (spawnNew)
             {
+                thisOne = Bombs.Count;
                 Bombs.Add(new Bomb(Game, RefGameLogic));
-                thisOne = Bombs.Count - 1;
             }
 
             Bombs[thisOne].Spawn(Position, Rotation, Velocity / 4);

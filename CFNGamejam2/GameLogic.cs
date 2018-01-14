@@ -27,7 +27,6 @@ namespace CFNGamejam2
 
         GameState GameMode = GameState.MainMenu;
 
-        float TheGameScale = 1.0f;
         int Score = 0;
 
         public Ground RefGround { get => TheGround; }
@@ -47,7 +46,7 @@ namespace CFNGamejam2
             // Y positive is Up.
             // X positive is right of window when camera is at rotation zero.
             // Z positive is towards the camera when at rotation zero.
-            // Y positive rotation rotates CCW. Zero is facing X positive. Pi/2 faces Z negative.
+            // Positive rotation rotates CCW. Zero has front facing X positive. Pi/2 on Y faces Z negative.
             game.Components.Add(this);
         }
 
@@ -65,8 +64,10 @@ namespace CFNGamejam2
 
         public void BeginRun()
         {
-            Services.Camera.Target = new Vector3(0, 50, 0);
             GameMode = GameState.MainMenu;
+
+            RefPlayer.NewWave();
+            RefPlayer.GameOver();
         }
 
         public override void Update(GameTime gameTime)
@@ -89,7 +90,7 @@ namespace CFNGamejam2
 
         public void NewWave()
         {
-
+            RefEnemy.NewWave();
         }
 
         public void GameOver()

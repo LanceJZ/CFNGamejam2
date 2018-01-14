@@ -11,7 +11,7 @@ using XnaModel = Microsoft.Xna.Framework.Graphics.Model;
 
 namespace Engine
 {
-    public class AModel : PositionedObject, IDrawComponent, ILoadContent
+    public class AModel : PositionedObject, IDrawComponent
     {
         public Vector3 DefuseColor = new Vector3(1,1,1);
         Texture2D XNATexture;
@@ -46,7 +46,6 @@ namespace Engine
         {
             Enabled = true;
             Services.AddDrawableComponent(this);
-            Services.AddLoadable(this);
 
             Services.GraphicsDM.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
             Services.GraphicsDM.GraphicsDevice.SamplerStates[0] = SamplerState.AnisotropicWrap;
@@ -60,7 +59,6 @@ namespace Engine
 
         public override void BeginRun()
         {
-            LoadContent();
             base.BeginRun();
         }
 
@@ -284,11 +282,6 @@ namespace Engine
         public SoundEffect LoadSoundEffect(string soundName)
         {
             return Game.Content.Load<SoundEffect>("Sounds/" + soundName);
-        }
-
-        public virtual void LoadContent()
-        {
-            //This method intentionally left blank.
         }
 
         public void Destroy()

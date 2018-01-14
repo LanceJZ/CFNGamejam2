@@ -15,6 +15,7 @@ namespace CFNGamejam2.Entities
         GameLogic RefGameLogic;
         List<Missile> Missiles;
         Smoke TheSmoke;
+        Explode TheExplosion;
         AModel HealthBar;
         AModel HealthBack;
         AModel Turret;
@@ -22,6 +23,7 @@ namespace CFNGamejam2.Entities
         Timer FireTimer;
 
         SoundEffect FireSound;
+        SoundEffect ExplosionSound;
 
         Vector3 CurrentTarget = Vector3.Zero;
         int Health;
@@ -33,26 +35,32 @@ namespace CFNGamejam2.Entities
             RefGameLogic = gameLogic;
             Missiles = new List<Missile>();
             TheSmoke = new Smoke(game);
-            Turret = new AModel(game);
+            TheExplosion = new Explode(game);
             ChangeTargetTimer = new Timer(game);
             FireTimer = new Timer(game, 2);
-            HealthBar = new AModel(game);
-            HealthBack = new AModel(game);
+            Turret = new AModel(Game);
+            HealthBar = new AModel(Game);
+            HealthBack = new AModel(Game);
+            LoadContent();
         }
 
         public override void Initialize()
         {
 
             base.Initialize();
+
         }
 
-        public override void LoadContent()
+        public void LoadContent()
         {
             LoadModel("MissileBatteryBase");
             Turret.LoadModel("MissileBatteryTurret");
             HealthBar.LoadModel("Core/Cube");
             HealthBack.LoadModel("Core/Cube");
             FireSound = LoadSoundEffect("MissileFire");
+            ExplosionSound = LoadSoundEffect("GateExplode");
+
+            BeginRun();
         }
 
         public override void BeginRun()
@@ -72,6 +80,7 @@ namespace CFNGamejam2.Entities
             HealthBack.ModelScale.X = 1;
             HealthBack.DefuseColor = new Vector3(0.1f, 0.1f, 0.1f);
             HealthBack.AddAsChildOf(this, true, false);
+            TheExplosion.DefuseColor = new Vector3(0.5f, 0.5f, 0.6f);
         }
 
         public override void Update(GameTime gameTime)
@@ -140,11 +149,13 @@ namespace CFNGamejam2.Entities
                         {
                             Vector3 pos = Position;
                             pos.Y += 20;
+                            TheExplosion.Spawn(Turret.WorldPosition, 10, 500);
                             TheSmoke.Spawn(pos, 10, 50);
                             Turret.Active = false;
                             RefGameLogic.AddToScore(25);
                             HealthBar.Active = false;
                             HealthBack.Active = false;
+                            ExplosionSound.Play();
                         }
 
                         break;

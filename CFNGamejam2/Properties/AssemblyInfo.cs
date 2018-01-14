@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Tank Hunting Ducks Alpha")]
-[assembly: AssemblyProduct("CFNGamejam2")]
+[assembly: AssemblyTitle("Tank Hunting Ducks Alpha 1.0")]
+[assembly: AssemblyProduct("CFNGamejam2 Game Entry")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.721.13.0101")]
-[assembly: AssemblyFileVersion("0113.13.1.2203")]
+[assembly: AssemblyVersion("1.764.14.0101")]
+[assembly: AssemblyFileVersion("0114.14.1.0613")]

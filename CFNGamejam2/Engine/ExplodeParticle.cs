@@ -15,6 +15,8 @@ namespace Engine
         public ExplodeParticle(Game game) : base(game)
         {
             LifeTimer = new Timer(game);
+
+            LoadContent();
         }
 
         public override void Initialize()
@@ -22,9 +24,10 @@ namespace Engine
             base.Initialize();
         }
 
-        public override void LoadContent()
+        public void LoadContent()
         {
 
+            BeginRun();
         }
 
         public override void BeginRun()
