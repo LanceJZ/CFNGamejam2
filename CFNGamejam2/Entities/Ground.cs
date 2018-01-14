@@ -131,29 +131,25 @@ namespace CFNGamejam2.Entities
             {
                 ExtraLargeRocks.Add(new Rock(Game, RefGameLogic));
                 ExtraLargeRocks.Last().SetModel(ExtraLargeRockModel);
-                SpawnExtraLargeRock(ExtraLargeRocks.Last());
+                //SpawnExtraLargeRock(ExtraLargeRocks.Last());
             }
 
             for (int i = 0; i < 30; i++)
             {
                 LargeRocks.Add(new Rock(Game, RefGameLogic));
                 LargeRocks.Last().SetModel(LargeRockModel);
-                SpawnLargeRock(LargeRocks.Last());
+                //SpawnLargeRock(LargeRocks.Last());
 
                 MedRocks.Add(new Rock(Game, RefGameLogic));
                 MedRocks.Last().SetModel(MedRockModel);
-                SpawnMedRock(MedRocks.Last());
+                //SpawnMedRock(MedRocks.Last());
 
                 SmallRocks.Add(new Rock(Game, RefGameLogic));
                 SmallRocks.Last().SetModel(SmallRockModel);
-                SpawnSmallRock(SmallRocks.Last());
+                //SpawnSmallRock(SmallRocks.Last());
             }
 
-            Vector3[] path = new Vector3[2];
-            path[0] = new Vector3(0, -11, -Border);
-            path[1] = new Vector3(0, -11, Border);
-
-            ClearPath(path);
+            ResetRocks();
         }
 
         public override void Update(GameTime gameTime)
@@ -214,6 +210,36 @@ namespace CFNGamejam2.Entities
                     }
                 }
             }
+        }
+
+        public void ResetRocks()
+        {
+            foreach (Rock rock in ExtraLargeRocks)
+            {
+                SpawnExtraLargeRock(rock);
+            }
+
+            foreach (Rock rock in LargeRocks)
+            {
+                SpawnLargeRock(rock);
+            }
+
+            foreach (Rock rock in MedRocks)
+            {
+                SpawnMedRock(rock);
+            }
+
+            foreach (Rock rock in SmallRocks)
+            {
+                SpawnSmallRock(rock);
+            }
+
+
+            Vector3[] path = new Vector3[2];
+            path[0] = new Vector3(0, -11, -Border);
+            path[1] = new Vector3(0, -11, Border);
+
+            ClearPath(path);
         }
 
         bool MoveTowardsPoint(Vector3 goal)

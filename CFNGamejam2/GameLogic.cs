@@ -90,6 +90,7 @@ namespace CFNGamejam2
 
         public void NewWave()
         {
+            RefGround.ResetRocks();
             RefEnemy.NewWave();
         }
 
