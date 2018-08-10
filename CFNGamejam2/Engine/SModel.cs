@@ -24,7 +24,7 @@ namespace Engine
         public override void Initialize()
         {
             base.Initialize();
-            Services.AddDrawableComponent(this);
+            Core.AddDrawableComponent(this);
 
         }
 
@@ -66,14 +66,14 @@ namespace Engine
                     {
                         effect.LightingEnabled = true; // Turn on the lighting subsystem.
                         effect.PreferPerPixelLighting = true;
-                        effect.DirectionalLight0.DiffuseColor = Services.DefuseLight;
-                        effect.DirectionalLight0.Direction = Services.LightDirection;
-                        effect.DirectionalLight0.SpecularColor = Services.SpecularColor;
-                        effect.AmbientLightColor = Services.AmbientLightColor;
+                        effect.DirectionalLight0.DiffuseColor = Core.DefuseLight;
+                        effect.DirectionalLight0.Direction = Core.LightDirection;
+                        effect.DirectionalLight0.SpecularColor = Core.SpecularColor;
+                        effect.AmbientLightColor = Core.AmbientLightColor;
 
                         effect.World = localWorld;
 
-                        Services.Camera.Draw(effect);
+                        Core.DefaultCamera.Draw(effect);
                     }
 
                     mesh.Draw();

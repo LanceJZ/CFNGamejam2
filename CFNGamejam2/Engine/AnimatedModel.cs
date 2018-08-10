@@ -104,7 +104,7 @@ namespace Engine
                     effect.EnableDefaultLighting();
                     effect.PreferPerPixelLighting = true;
                     effect.World = localWorld;
-                    Services.Camera.Draw(effect);
+                    Core.DefaultCamera.Draw(effect);
                 }
 
                 mesh.Draw();

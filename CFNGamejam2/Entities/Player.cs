@@ -173,8 +173,8 @@ namespace CFNGamejam2.Entities
         public void GameOver()
         {
             RefGameLogic.RefUI.GameOver();
-            Services.Camera.Position.Z = 600 + RefGameLogic.RefGround.TheBorder - 30;
-            Services.Camera.Target = new Vector3(0, 0, RefGameLogic.RefGround.TheBorder - 30);
+            Core.DefaultCamera.Position.Z = 600 + RefGameLogic.RefGround.TheBorder - 30;
+            Core.DefaultCamera.Target = new Vector3(0, 0, RefGameLogic.RefGround.TheBorder - 30);
             RefGameLogic.GameOver();
             Active = false;
         }
@@ -199,8 +199,8 @@ namespace CFNGamejam2.Entities
             if (Gun.Rotation.Z > 0.333f)
                 Gun.Rotation.Z = 0.333f;
 
-            Services.Camera.Position.Z = 600 + Position.Z;
-            Services.Camera.Target = Position;
+            Core.DefaultCamera.Position.Z = 600 + Position.Z;
+            Core.DefaultCamera.Target = Position;
 
             WasBumped = false;
         }

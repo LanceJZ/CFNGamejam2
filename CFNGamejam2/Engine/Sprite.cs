@@ -91,7 +91,7 @@ namespace Engine
         {
             base.Initialize();
 
-            Services.AddDrawableComponent(this);
+            Core.AddDrawableComponent(this);
             m_FrameTime.Amount = 0.1f;
         }
 
@@ -226,7 +226,7 @@ namespace Engine
             {
                 if (m_Frames.Count > 0)
                 {
-                    Services.SpriteBatch.Draw(m_Texture, Position, Source, m_TintColor, RotationInRadians,
+                    Core.SpriteBatch.Draw(m_Texture, Position, Source, m_TintColor, RotationInRadians,
                         Vector2.Zero, Scale, SpriteEffects.None, 0.0f);
                 }
             }
@@ -237,7 +237,7 @@ namespace Engine
                 {
                     if (child.Active && child.Visable)
                     {
-                        Services.SpriteBatch.Draw(child.Texture, child.Position, child.Source, m_TintColor, child.RotationInRadians,
+                        Core.SpriteBatch.Draw(child.Texture, child.Position, child.Source, m_TintColor, child.RotationInRadians,
                             Vector2.Zero, child.Scale, SpriteEffects.None, 0.0f);
                     }
                 }

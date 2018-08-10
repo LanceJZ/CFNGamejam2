@@ -69,7 +69,7 @@
     <Compile Include="Engine\Numbers.cs" />
     <Compile Include="Engine\Plane.cs" />
     <Compile Include="Engine\PositionedObject.cs" />
-    <Compile Include="Engine\Services.cs" />
+    <Compile Include="Engine\Core.cs" />
     <Compile Include="Engine\SModel.cs" />
     <Compile Include="Engine\Smoke.cs" />
     <Compile Include="Engine\SmokeParticle.cs" />

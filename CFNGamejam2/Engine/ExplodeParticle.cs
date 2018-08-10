@@ -49,8 +49,8 @@ namespace Engine
             base.Spawn(position);
 
             Velocity = RandomVelocity(100);
-            ModelScale = new Vector3(Services.RandomMinMax(0.5f, 1.5f));
-            LifeTimer.Reset(Services.RandomMinMax(0.1f, 1));
+            ModelScale = new Vector3(Core.RandomMinMax(0.5f, 1.5f));
+            LifeTimer.Reset(Core.RandomMinMax(0.1f, 1));
         }
     }
 }

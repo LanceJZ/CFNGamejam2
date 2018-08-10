@@ -332,19 +332,19 @@ namespace Engine
 
 		public float RandomRadian()
 		{
-			return Services.RandomMinMax(0, MathHelper.TwoPi);
+			return Core.RandomMinMax(0, MathHelper.TwoPi);
 		}
 
 		public Vector3 RandomVelocity(float speed)
 		{
 			float ang = RandomRadian();
-			float amt = Services.RandomMinMax(speed * 0.15f, speed);
+			float amt = Core.RandomMinMax(speed * 0.15f, speed);
 			return VelocityFromAngleZ(ang, amt);
 		}
 
 		public Vector3 RandomVelocity(float speed, float radianDirection)
 		{
-			float amt = Services.RandomMinMax(speed * 0.15f, speed);
+			float amt = Core.RandomMinMax(speed * 0.15f, speed);
 			return VelocityFromAngleZ(radianDirection, amt);
 		}
 		/// <summary>
@@ -408,8 +408,8 @@ namespace Engine
 
 		public Vector2 RandomEdge()
 		{
-			return new Vector2(Services.WindowWidth * 0.5f,
-				Services.RandomMinMax(-Services.WindowHeight * 0.45f, Services.WindowHeight * 0.45f));
+			return new Vector2(Core.WindowWidth * 0.5f,
+				Core.RandomMinMax(-Core.WindowHeight * 0.45f, Core.WindowHeight * 0.45f));
 		}
 		/// <summary>
 		/// Aims at target using the Y ground Plane.
@@ -516,26 +516,26 @@ namespace Engine
 
 		public void CheckWindowBorders()
 		{
-			if (Position.X > Services.WindowWidth)
+			if (Position.X > Core.WindowWidth)
 				Position.X = 0;
 
 			if (Position.X < 0)
-				Position.X = Services.WindowWidth;
+				Position.X = Core.WindowWidth;
 
-			if (Position.Y > Services.WindowHeight)
+			if (Position.Y > Core.WindowHeight)
 				Position.Y = 0;
 
 			if (Position.Y < 0)
-				Position.Y = Services.WindowHeight;
+				Position.Y = Core.WindowHeight;
 		}
 
 		public void CheckWindowSideBorders(int width)
 		{
-			if (Position.X + width > Services.WindowWidth)
+			if (Position.X + width > Core.WindowWidth)
 				Position.X = 0;
 
 			if (Position.X < 0)
-				Position.X = Services.WindowWidth - width;
+				Position.X = Core.WindowWidth - width;
 		}
 
 		#endregion

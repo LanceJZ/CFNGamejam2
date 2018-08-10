@@ -62,7 +62,7 @@ namespace Engine
         {
             base.Initialize();
             cameraRotation = Matrix.Identity;
-            Services.AddUpdateableComponent(this);
+            Core.AddUpdateableComponent(this);
         }
 
         /// <summary>

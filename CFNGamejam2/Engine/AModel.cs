@@ -45,12 +45,12 @@ namespace Engine
         public override void Initialize()
         {
             Enabled = true;
-            Services.AddDrawableComponent(this);
+            Core.AddDrawableComponent(this);
 
-            Services.GraphicsDM.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-            Services.GraphicsDM.GraphicsDevice.SamplerStates[0] = SamplerState.AnisotropicWrap;
-            Services.GraphicsDM.GraphicsDevice.BlendState = BlendState.Opaque;
-            Services.GraphicsDM.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            Core.GraphicsDM.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+            Core.GraphicsDM.GraphicsDevice.SamplerStates[0] = SamplerState.AnisotropicWrap;
+            Core.GraphicsDM.GraphicsDevice.BlendState = BlendState.Opaque;
+            Core.GraphicsDM.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
 
             BaseWorld = Matrix.Identity;
 
@@ -79,19 +79,6 @@ namespace Engine
                 Translate - move the moon to the final location, which will be the same
                         as the location of earth in this case since it's already setup to be in orbit.*/
 
-            //Calculate the base transformation by combining
-            //translation, rotation, and scaling
-            //BaseWorld = Matrix.CreateScale(ModelScale)
-            //    * Matrix.CreateFromYawPitchRoll(Rotation.Y, Rotation.X, Rotation.Z)
-            //    * Matrix.CreateTranslation(Position);
-
-            //if (Child)
-            //{
-            //    BaseWorld *= Matrix.CreateFromYawPitchRoll(ParentPO.Rotation.Y + ParentPO.ParentRotation.Y,
-            //        ParentPO.Rotation.X + ParentPO.ParentRotation.X,
-            //        ParentPO.Rotation.Z + ParentPO.ParentRotation.Z)
-            //        * Matrix.CreateTranslation(ParentPO.Position + ParentPO.ParentPosition);
-            //}
 
             MatrixUpdate();
 
@@ -129,7 +116,7 @@ namespace Engine
                         //if (XNATexture != null)
                         //effect.Texture = XNATexture;// ?? effect.Texture; //Replace texture if XNATexture is not null.
 
-                        Services.Camera.Draw(effect);
+                        Core.DefaultCamera.Draw(effect);
                     }
 
                     mesh.Draw();

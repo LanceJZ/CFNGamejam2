@@ -110,7 +110,7 @@ namespace CFNGamejam2.Entities
                 if (ChangeTargetTimer.Elapsed)
                 {
                     ChangeTarget();
-                    ChangeTargetTimer.Reset(Services.RandomMinMax(1.25f, 3.25f));
+                    ChangeTargetTimer.Reset(Core.RandomMinMax(1.25f, 3.25f));
                 }
             }
 

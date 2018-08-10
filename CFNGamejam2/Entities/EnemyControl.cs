@@ -43,7 +43,7 @@ namespace CFNGamejam2.Entities
 
         public void LoadContent()
         {
-            WallPiece = Services.LoadModel("GateWall");
+            WallPiece = Core.LoadModel("GateWall");
         }
 
         public void BeginRun()
@@ -87,7 +87,7 @@ namespace CFNGamejam2.Entities
             int border = RefGameLogic.RefGround.TheBorder;
 
             for (int i = 0; i < (1 + Wave); i++)
-                SpawnDuck(new Vector3(Services.RandomMinMax(-border, border), 200, border + 500));
+                SpawnDuck(new Vector3(Core.RandomMinMax(-border, border), 200, border + 500));
 
             foreach (MissileBattery battery in TheBatterys)
             {

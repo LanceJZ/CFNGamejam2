@@ -52,12 +52,12 @@ namespace Engine
         {
             base.Spawn(position);
 
-            Scale = Services.RandomMinMax(1, 2);
-            LifeTimer.Reset(Services.RandomMinMax(3.1f, 15.5f));
-            Velocity.Y = Services.RandomMinMax(1.1f, 4.5f);
+            Scale = Core.RandomMinMax(1, 2);
+            LifeTimer.Reset(Core.RandomMinMax(3.1f, 15.5f));
+            Velocity.Y = Core.RandomMinMax(1.1f, 4.5f);
             float drift = 1.5f;
-            Velocity.X = Services.RandomMinMax(-drift, drift);
-            Velocity.Z = Services.RandomMinMax(-drift, drift);
+            Velocity.X = Core.RandomMinMax(-drift, drift);
+            Velocity.Z = Core.RandomMinMax(-drift, drift);
         }
     }
 }

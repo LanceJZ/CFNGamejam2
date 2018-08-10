@@ -237,12 +237,12 @@ namespace Engine
             base.Initialize();
 
             AABB = new Rectangle();
-            Services.AddBeginable(this);
+            Core.AddBeginable(this);
         }
 
         public virtual void BeginRun()
         {
-            m_ProjectionMatrix = Matrix.CreateOrthographic(Services.WindowWidth, Services.WindowHeight, 1, 2);
+            m_ProjectionMatrix = Matrix.CreateOrthographic(Core.WindowWidth, Core.WindowHeight, 1, 2);
         }
 
         public virtual void AddChild(SpritePositionedObject child, bool activeDependent, bool directConnection)

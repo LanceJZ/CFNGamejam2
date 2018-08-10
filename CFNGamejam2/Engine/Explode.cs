@@ -35,7 +35,7 @@ namespace Engine
 
         public void LoadContent()
         {
-            Cube = Services.LoadModel("Core/Cube");
+            Cube = Core.LoadModel("Core/Cube");
         }
 
         public void BeginRun()
@@ -65,7 +65,7 @@ namespace Engine
         public void Spawn(Vector3 position, float radius, int minCount)
         {
             Enabled = true;
-            int count = Services.RandomMinMax(minCount, (int)(minCount + radius * 2));
+            int count = Core.RandomMinMax(minCount, (int)(minCount + radius * 2));
 
             if (count > Particles.Count)
             {
@@ -81,8 +81,8 @@ namespace Engine
 
             foreach (ExplodeParticle particle in Particles)
             {
-                position += new Vector3(Services.RandomMinMax(-radius, radius),
-                    Services.RandomMinMax(-radius, radius), 0);
+                position += new Vector3(Core.RandomMinMax(-radius, radius),
+                    Core.RandomMinMax(-radius, radius), 0);
 
                 particle.Spawn(position);
             }

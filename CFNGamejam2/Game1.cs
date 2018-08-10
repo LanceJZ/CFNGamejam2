@@ -6,10 +6,6 @@ using Engine;
 
 namespace CFNGamejam2
 {
-    using GameServices = Services;
-    /// <summary>
-    /// This is the main type for your game.
-    /// </summary>
     public class Game1 : Game
     {
         GraphicsDeviceManager Graphics;
@@ -34,11 +30,11 @@ namespace CFNGamejam2
             Graphics.PreparingDeviceSettings += SetMultiSampling;
             Graphics.ApplyChanges();
             Graphics.GraphicsDevice.RasterizerState = new RasterizerState(); //Must be after Apply Changes.
-            GameServices.TheGame = this;
+            Core.GameRef = this;
             IsFixedTimeStep = false;
             Content.RootDirectory = "Content";
             // Positive Y is Up. Positive X is Right.
-            GameServices.Initialize(Graphics, this, new Vector3(0, 200, 600), false, 1, 10000);
+            Core.Initialize(Graphics, this, new Vector3(0, 200, 600), false, 1, 10000);
 
             TheGame = new GameLogic(this);
             FPSTimer = new Timer(this, 1);
@@ -59,10 +55,10 @@ namespace CFNGamejam2
         protected override void Initialize()
         {
             // Setup lighting.
-            GameServices.DefuseLight = new Vector3(0.6f, 0.5f, 0.7f);
-            GameServices.LightDirection = new Vector3(-0.75f, -0.75f, -0.5f);
-            GameServices.SpecularColor = new Vector3(0.1f, 0, 0.5f);
-            GameServices.AmbientLightColor = new Vector3(0.25f, 0.25f, 0.25f); // Add some overall ambient light.
+            Core.DefuseLight = new Vector3(0.6f, 0.5f, 0.7f);
+            Core.LightDirection = new Vector3(-0.75f, -0.75f, -0.5f);
+            Core.SpecularColor = new Vector3(0.1f, 0, 0.5f);
+            Core.AmbientLightColor = new Vector3(0.25f, 0.25f, 0.25f); // Add some overall ambient light.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             base.Initialize();

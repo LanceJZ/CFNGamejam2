@@ -10,10 +10,10 @@ using XnaModel = Microsoft.Xna.Framework.Graphics.Model;
 
 namespace Engine
 {
-    public sealed class Services : DrawableGameComponent
+    public sealed class Core : DrawableGameComponent
     {
         #region Fields
-        private static Services m_Instance = null;
+        private static Core m_Instance = null;
         private static Random m_RandomNumber;
         private static SpriteBatch m_SpriteBatch;
         private static GraphicsDeviceManager m_GraphicsDM;
@@ -35,7 +35,7 @@ namespace Engine
         /// Instead of using the mInstance this will do the check to see if the Instance is valid
         /// where ever you use it. It is also private so it will only get used inside the engine services.
         /// </summary>
-        private static Services Instance
+        private static Core Instance
         {
             get
             {
@@ -49,10 +49,10 @@ namespace Engine
             }
         }
 
-        public static Game TheGame { set => m_Game = value; }
+        public static Game GameRef { set => m_Game = value; }
         public static GraphicsDeviceManager GraphicsDM { get => m_GraphicsDM; }
         public static SpriteBatch SpriteBatch { get => m_SpriteBatch; set => m_SpriteBatch = value; }
-        public static Camera Camera { get => m_Camera; }
+        public static Camera DefaultCamera { get => m_Camera; }
         public static Random RandomNumber { get => m_RandomNumber; }
         /// <summary>
         /// Returns the window size in pixels, of the height.
@@ -81,7 +81,7 @@ namespace Engine
         /// This is the constructor for the Services
         /// You will note that it is private that means that only the Services can only create itself.
         /// </summary>
-        private Services(Game game) : base(game)
+        private Core(Game game) : base(game)
         {
             game.Components.Add(this);
             // Create a new SpriteBatch, which can be used to draw textures.
@@ -161,7 +161,7 @@ namespace Engine
             {
                 m_GraphicsDM = graphics;
                 //Create the Engine Services
-                m_Instance = new Services(game);
+                m_Instance = new Core(game);
                 m_RandomNumber = new Random(DateTime.Now.Millisecond);
                 m_Camera = new Camera(game, cameraPosition, Vector3.Zero, Vector3.Zero, othrographic, near, far);
                 m_Drawable = new List<IDrawComponent>();

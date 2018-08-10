@@ -68,8 +68,8 @@ namespace CFNGamejam2.Entities
             viewPos.Y = 35;
 
             Vector3 camRot = new Vector3();
-            camRot.Y = -Services.Camera.View.Rotation.Y;
-            camRot.X = -Services.Camera.View.Rotation.X;
+            camRot.Y = -Core.DefaultCamera.View.Rotation.Y;
+            camRot.X = -Core.DefaultCamera.View.Rotation.X;
             TheScore.Change(viewPos + new Vector3(50, 0, 0), camRot);
             TheScoreWords.Change(viewPos + new Vector3(-50, 0, 0), camRot);
         }

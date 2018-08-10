@@ -28,8 +28,8 @@ namespace Engine
         {
             base.Initialize();
 
-            PlaneBasicEffect = new BasicEffect(Engine.Services.GraphicsDM.GraphicsDevice);
-            Engine.Services.AddDrawableComponent(this);
+            PlaneBasicEffect = new BasicEffect(Engine.Core.GraphicsDM.GraphicsDevice);
+            Engine.Core.AddDrawableComponent(this);
         }
 
         public override void BeginRun()
@@ -52,9 +52,9 @@ namespace Engine
 
             // Set object and camera info
             PlaneBasicEffect.World = BaseWorld;
-            PlaneBasicEffect.View = Engine.Services.Camera.View;
-            PlaneBasicEffect.Projection = Engine.Services.Camera.Projection;
-            Engine.Services.GraphicsDM.GraphicsDevice.SetVertexBuffer(PlaneVertexBuffer);
+            PlaneBasicEffect.View = Engine.Core.DefaultCamera.View;
+            PlaneBasicEffect.Projection = Engine.Core.DefaultCamera.Projection;
+            Engine.Core.GraphicsDM.GraphicsDevice.SetVertexBuffer(PlaneVertexBuffer);
         }
 
         public void Draw()
@@ -63,13 +63,13 @@ namespace Engine
             foreach (EffectPass pass in PlaneBasicEffect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                Engine.Services.GraphicsDM.GraphicsDevice.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleList, Verts, 0, 2);
+                Engine.Core.GraphicsDM.GraphicsDevice.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleList, Verts, 0, 2);
             }
         }
 
         public void Create(Texture2D texture)
         {
-            PlaneVertexBuffer = new VertexBuffer(Engine.Services.GraphicsDM.GraphicsDevice, typeof(VertexPositionTexture),
+            PlaneVertexBuffer = new VertexBuffer(Engine.Core.GraphicsDM.GraphicsDevice, typeof(VertexPositionTexture),
                 Verts.Length, BufferUsage.None);
 
             ChangePlaneTexture(texture);

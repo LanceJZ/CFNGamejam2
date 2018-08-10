@@ -57,13 +57,13 @@ namespace CFNGamejam2.Entities
 
         public void LoadContent()
         {
-            GroundTileModel = Services.LoadModel("Ground");
-            MountainTilesModel = Services.LoadModel("Mountain");
-            WaterTileModel = Services.LoadModel("Water");
-            ExtraLargeRockModel = Services.LoadModel("ExtraLargeRock");
-            LargeRockModel = Services.LoadModel("LargeRock");
-            MedRockModel = Services.LoadModel("MedRock");
-            SmallRockModel = Services.LoadModel("SmallRock");
+            GroundTileModel = Core.LoadModel("Ground");
+            MountainTilesModel = Core.LoadModel("Mountain");
+            WaterTileModel = Core.LoadModel("Water");
+            ExtraLargeRockModel = Core.LoadModel("ExtraLargeRock");
+            LargeRockModel = Core.LoadModel("LargeRock");
+            MedRockModel = Core.LoadModel("MedRock");
+            SmallRockModel = Core.LoadModel("SmallRock");
         }
 
         public void BeginRun()
@@ -281,11 +281,11 @@ namespace CFNGamejam2.Entities
 
         void SpawnRock(Rock rock, int hightMin, int hightMax, int border)
         {
-            rock.Spawn(new Vector3(Services.RandomMinMax(-border, border),
-                Services.RandomMinMax(hightMin, hightMax), Services.RandomMinMax(-border, border)),
-                new Vector3(Services.RandomMinMax(0, MathHelper.Pi),
-                Services.RandomMinMax(0, MathHelper.Pi),
-                Services.RandomMinMax(0, MathHelper.Pi)));
+            rock.Spawn(new Vector3(Core.RandomMinMax(-border, border),
+                Core.RandomMinMax(hightMin, hightMax), Core.RandomMinMax(-border, border)),
+                new Vector3(Core.RandomMinMax(0, MathHelper.Pi),
+                Core.RandomMinMax(0, MathHelper.Pi),
+                Core.RandomMinMax(0, MathHelper.Pi)));
         }
     }
 }

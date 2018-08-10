@@ -121,7 +121,7 @@ namespace CFNGamejam2.Entities
                     {
                         if (QuackTimer.Elapsed)
                         {
-                            QuackTimer.Reset(Services.RandomMinMax(6.5f, 15.1f));
+                            QuackTimer.Reset(Core.RandomMinMax(6.5f, 15.1f));
                             QuackSound.Play(0.25f, 1, 1);
                         }
                     }
@@ -142,7 +142,7 @@ namespace CFNGamejam2.Entities
             if (ChangeHeadingTimer.Elapsed)
             {
                 ChangeHeading();
-                ChangeHeadingTimer.Reset(Services.RandomMinMax(3.25f, 6.25f));
+                ChangeHeadingTimer.Reset(Core.RandomMinMax(3.25f, 6.25f));
             }
 
             CheckOffMap();
@@ -155,7 +155,7 @@ namespace CFNGamejam2.Entities
         {
             base.Spawn(position);
 
-            QuackTimer.Reset(Services.RandomMinMax(3.5f, 15.1f));
+            QuackTimer.Reset(Core.RandomMinMax(3.5f, 15.1f));
         }
 
         void CheckHit()
@@ -178,7 +178,7 @@ namespace CFNGamejam2.Entities
 
         void ChangeToFlap()
         {
-            FlapTimer.Reset(Services.RandomMinMax(2.5f, 8.5f));
+            FlapTimer.Reset(Core.RandomMinMax(2.5f, 8.5f));
             CurrentMode = Mode.Flap;
             Wings[0].RotationVelocity.X = 6;
             Wings[1].RotationVelocity.X = -6;
@@ -190,7 +190,7 @@ namespace CFNGamejam2.Entities
         {
             Acceleration.Y = -1.5f;
             Velocity.Y = 0;
-            GlideTimer.Reset(Services.RandomMinMax(5.5f, 10.5f));
+            GlideTimer.Reset(Core.RandomMinMax(5.5f, 10.5f));
             CurrentMode = Mode.Glide;
 
             for (int i = 0; i < 2; i++)
@@ -209,8 +209,8 @@ namespace CFNGamejam2.Entities
             else
             {
                 int border = RefGameLogic.RefGround.TheBorder;
-                CurrentHeading = new Vector3(Services.RandomMinMax(-border, border),
-                    0, Services.RandomMinMax( border - 500, border + 500));
+                CurrentHeading = new Vector3(Core.RandomMinMax(-border, border),
+                    0, Core.RandomMinMax( border - 500, border + 500));
             }
         }
 
@@ -227,7 +227,7 @@ namespace CFNGamejam2.Entities
         {
             if (Vector3.Distance(Position, RefGameLogic.RefPlayer.Position) < 50 + Position.Y)
             {
-                DropBombTimer.Reset(Services.RandomMinMax(2.5f, 5.5f));
+                DropBombTimer.Reset(Core.RandomMinMax(2.5f, 5.5f));
                 DropBomb();
             }
         }

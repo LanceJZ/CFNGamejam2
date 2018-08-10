@@ -30,7 +30,7 @@ namespace Engine
         {
             base.Initialize();
 
-            Services.AddDrawableComponent(this);
+            Core.AddDrawableComponent(this);
         }
 
         public virtual void LoadContent()
@@ -58,7 +58,7 @@ namespace Engine
         {
             if (Active)
             {
-                Services.SpriteBatch.DrawString(m_SpriteFont, m_String, Position, m_TintColor);
+                Core.SpriteBatch.DrawString(m_SpriteFont, m_String, Position, m_TintColor);
             }
         }
     }
