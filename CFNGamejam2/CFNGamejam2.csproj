@@ -24,7 +24,7 @@
     <AssemblyFileVersionSettings>MMddStamp.DayOfYearStamp.MonthStamp.TimeStamp</AssemblyFileVersionSettings>
     <AssemblyInfoVersionSettings>YearStamp.DateStamp.DeltaDayStamp.Increment</AssemblyInfoVersionSettings>
     <PrimaryVersionType>AssemblyVersionAttribute</PrimaryVersionType>
-    <AssemblyVersion>1.766.16.0</AssemblyVersion>
+    <AssemblyVersion>1.769.16.0</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>

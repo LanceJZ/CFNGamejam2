@@ -12,5 +12,5 @@ newmtl palette
 	Kd 1.0000 1.0000 1.0000
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka E:\Documents\Visual Studio 2017\Projects\VS2017C#\MonoGame\CFNGamejam2\CFNGamejam2\Content\Models\DuckRWing.png
-	map_Kd E:\Documents\Visual Studio 2017\Projects\VS2017C#\MonoGame\CFNGamejam2\CFNGamejam2\Content\Models\DuckRWing.png
+	map_Ka DuckRWing.png
+	map_Kd DuckRWing.png
